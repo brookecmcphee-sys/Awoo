@@ -1,0 +1,62 @@
+rules_version = '2';
+// Paste this whole file into Firebase console > Firestore Database > Rules, then click Publish.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isMember(hid) {
+      return signedIn() &&
+        request.auth.uid in get(/databases/$(database)/documents/households/$(hid)).data.members;
+    }
+
+    // Each person's own settings (handle, plan, which household they belong to). Private.
+    match /users/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+
+    // A household shares dogs, treats, walks and reminders between partners.
+    match /households/{hid} {
+      allow get: if signedIn();
+      allow list: if false;
+      allow create: if signedIn() && request.resource.data.members == [request.auth.uid];
+      // Members can change it. Someone with the invite code can add only themselves.
+      allow update: if isMember(hid) || (
+        signedIn() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members']) &&
+        request.resource.data.members.toSet().difference(resource.data.members.toSet()) == [request.auth.uid].toSet() &&
+        resource.data.members.toSet().difference(request.resource.data.members.toSet()).size() == 0 &&
+        request.resource.data.members.size() <= 6
+      );
+      allow delete: if false;
+
+      match /dogs/{dogId} {
+        allow read, write: if isMember(hid);
+      }
+      match /logs/{logId} {
+        allow read, write: if isMember(hid);
+      }
+    }
+
+    // The Pack: everyone signed in can read; each person writes only their own entry.
+    match /pack/{uid} {
+      allow read: if signedIn();
+      allow write: if signedIn() && request.auth.uid == uid;
+    }
+    match /boops/{uid} {
+      allow read: if signedIn();
+      allow write: if signedIn() && request.auth.uid == uid;
+    }
+
+    // Photos, stored as small compressed images.
+    match /images/{imageId} {
+      allow get: if signedIn();
+      allow list: if false;
+      allow create: if signedIn() &&
+        request.resource.data.owner == request.auth.uid &&
+        request.resource.data.data is string &&
+        request.resource.data.data.size() < 1000000;
+      allow update: if false;
+      allow delete: if signedIn() && resource.data.owner == request.auth.uid;
+    }
+  }
+}

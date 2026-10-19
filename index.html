@@ -1,0 +1,1328 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Awoo</title>
+<meta name="description" content="Awoo, the app for cat and dog pawrents: health records, reminders, treats, vet and insurance details, memories and a pets-only feed for your friends.">
+<meta name="theme-color" content="#FF5FA2">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Awoo">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+img{max-width:100%}
+[hidden]{display:none!important}
+/* Layout: a phone-sized app, framed on desktop beside a short product note; full width on phones.
+   Look: bubblegum pink, lavender, butter, mint and sky on a pale pink polka-dot ground; rounded type. */
+:root{
+  --bg:#FFEFF5;          /* page: strawberry milk */
+  --dot:#FFD3E5;
+  --surface:#FFFFFF;
+  --surface-2:#FFF5F9;
+  --ink:#43294F;         /* soft plum */
+  --muted:#8E7598;
+  --line:#F7D6E6;
+  --accent:#FF5FA2;      /* bubblegum */
+  --accent-ink:#FFFFFF;
+  --accent-soft:#FFE0EE;
+  --butter:#FFE07A;
+  --butter-soft:#FFF5D2;
+  --lilac:#C3AEFF;
+  --lilac-soft:#EFE8FF;
+  --sky:#9FD6FF;
+  --sky-soft:#E3F3FF;
+  --good:#2FB487;        /* mint */
+  --good-soft:#D9F6EB;
+  --alert:#E8445A;
+  --alert-ink:#FFFFFF;
+  --alert-soft:#FFE1E6;
+  --phone:#FFFBFD;
+  --shadow:0 30px 60px -28px rgba(255,95,162,.45);
+  --display:"Fredoka", "Arial Rounded MT Bold", "Varela Round", system-ui, sans-serif;
+  --body:"Nunito", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#21162A;--dot:#2E2039;--surface:#2C2036;--surface-2:#261B2F;--ink:#FCEFF7;--muted:#C2A9CC;--line:#41304D;
+  --accent:#FF7DB4;--accent-ink:#2A0E1C;--accent-soft:#4D2440;--butter:#F7D46A;--butter-soft:#3E3426;
+  --lilac:#B39DFF;--lilac-soft:#352B4F;--sky:#86C6F5;--sky-soft:#1F3247;--good:#6EDDB6;--good-soft:#1C3B33;--alert:#FF6B7E;--alert-ink:#2A0A10;--alert-soft:#4A1E28;--phone:#241A2E;
+  --shadow:0 30px 60px -28px rgba(0,0,0,.7);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#21162A;--dot:#2E2039;--surface:#2C2036;--surface-2:#261B2F;--ink:#FCEFF7;--muted:#C2A9CC;--line:#41304D;
+  --accent:#FF7DB4;--accent-ink:#2A0E1C;--accent-soft:#4D2440;--butter:#F7D46A;--butter-soft:#3E3426;
+  --lilac:#B39DFF;--lilac-soft:#352B4F;--sky:#86C6F5;--sky-soft:#1F3247;--good:#6EDDB6;--good-soft:#1C3B33;--alert:#FF6B7E;--alert-ink:#2A0A10;--alert-soft:#4A1E28;--phone:#241A2E;
+  --shadow:0 30px 60px -28px rgba(0,0,0,.7);color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg) radial-gradient(var(--dot) 2.5px,transparent 3px) 0 0/26px 26px;color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:0;font-weight:600}
+p{margin:0}
+
+.stage{display:flex;gap:56px;align-items:center;justify-content:center;flex-wrap:wrap;min-height:100%}
+.note{max-width:340px;display:flex;flex-direction:column;gap:18px}
+.note .wordmark{font-family:var(--display);font-weight:700;font-size:64px;line-height:.9;letter-spacing:-.02em;color:var(--accent)}
+.note .wordmark span{color:var(--lilac)}
+.note p{color:var(--muted);font-size:16px}
+.note .price{display:flex;gap:10px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--surface);border:2px solid var(--line);font-size:13px;font-weight:700}
+.note .jump{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.linkbtn{font-weight:700;color:var(--accent);text-decoration:underline;text-underline-offset:3px;font-size:14px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+/* Phone */
+.phone{width:390px;max-width:100%;height:min(820px,calc(100vh - 48px));min-height:620px;background:var(--phone);border-radius:44px;
+  border:6px solid var(--surface);box-shadow:var(--shadow);position:relative;overflow:hidden;display:flex;flex-direction:column}
+.screens{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+.screens::-webkit-scrollbar{display:none}
+.screen{padding:22px 20px 28px;display:flex;flex-direction:column;gap:18px}
+.statusbar{display:flex;justify-content:space-between;padding:14px 26px 0;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.topbar h1{font-size:28px;font-weight:800}
+.dogswitch{display:flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:4px 12px 4px 4px;font-weight:700;font-size:14px}
+.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;color:var(--ink);flex:none}
+.av-biscuit{background:var(--butter)}
+.av-mochi{background:var(--lilac)}
+
+.trial{display:flex;align-items:center;justify-content:space-between;gap:10px;background:linear-gradient(120deg,var(--lilac-soft),var(--accent-soft));color:var(--ink);border:2px solid var(--surface);border-radius:24px;padding:12px 14px;text-align:left;width:100%}
+.trial b{font-family:var(--display);font-size:15px}
+.trial small{display:block;opacity:.75;font-size:12px}
+.trial .go{background:var(--accent);color:var(--accent-ink);padding:7px 12px;border-radius:999px;font-weight:700;font-size:13px;white-space:nowrap}
+
+.hello{display:flex;flex-direction:column;gap:4px}
+.hello h2{font-size:24px;font-weight:700}
+.hello p{color:var(--muted)}
+
+.section-h{display:flex;justify-content:space-between;align-items:baseline}
+.section-h h3{font-size:17px;font-weight:700}
+.section-h button{font-size:13px;font-weight:700;color:var(--accent)}
+
+.card{background:var(--surface);border:2px solid var(--line);border-radius:26px;padding:14px 16px}
+.list{display:flex;flex-direction:column}
+.row{display:flex;align-items:center;gap:12px;padding:11px 2px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row .grow{flex:1;min-width:0}
+.row .t{font-weight:700}
+.row .s{font-size:12.5px;color:var(--muted)}
+.check{width:28px;height:28px;border-radius:50%;border:2.5px solid var(--lilac);display:grid;place-items:center;flex:none;transition:background .15s,border-color .15s}
+.check svg{opacity:0}
+.row.done .check{background:var(--accent);border-color:var(--accent)}
+.row.done .check svg{opacity:1}
+.row.done .t{text-decoration:line-through;color:var(--muted)}
+.time{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.pill.due{background:var(--accent-soft);color:var(--accent)}
+.pill.ok{background:var(--good-soft);color:var(--good)}
+.pill.soon{background:var(--butter-soft);color:var(--ink)}
+.pill.sky{background:var(--sky-soft);color:var(--ink)}
+
+.progress{display:flex;align-items:center;gap:12px}
+.bar{flex:1;height:12px;border-radius:99px;background:var(--surface);overflow:hidden;border:2px solid var(--line)}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--lilac),var(--accent));border-radius:99px;transition:width .25s}
+.progress span{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums}
+
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mini{border-radius:26px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.mini.butter{background:var(--butter-soft)}
+.mini.lilac{background:var(--lilac-soft)}
+.mini.sky{background:var(--sky-soft)}
+.mini .k{font-size:12px;color:var(--muted);font-weight:500}
+.mini .v{font-family:var(--display);font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.05}
+.mini .v small{font-size:14px;font-weight:700}
+
+.feed .row{align-items:flex-start}
+.who{width:32px;height:32px;border-radius:50%;background:var(--sky-soft);border:2px solid var(--surface);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+
+/* Health */
+.chart svg{display:block;width:100%;height:auto}
+.chart .lbl{font-size:10px;fill:var(--muted);font-family:var(--body)}
+.segment{display:flex;background:var(--lilac-soft);border:2px solid var(--line);border-radius:999px;padding:3px}
+.segment button{flex:1;padding:7px 0;border-radius:999px;font-size:13px;font-weight:700;color:var(--muted)}
+.segment button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+/* Memories */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.ph{aspect-ratio:1;max-width:100%;border-radius:20px;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:6px}
+.ph span{font-size:10.5px;font-weight:800;background:rgba(255,255,255,.9);color:#43294F;padding:3px 8px;border-radius:99px}
+.ph svg{position:absolute;inset:0;margin:auto;opacity:.6}
+.p1{background:linear-gradient(160deg,#FFF1A8,#FFC86B)}
+.p2{background:linear-gradient(160deg,#E3D8FF,#B49CFF)}
+.p3{background:linear-gradient(160deg,#C9F5E3,#7FDDB9)}
+.p4{background:linear-gradient(160deg,#FFD6E7,#FF8DBC)}
+.p5{background:linear-gradient(160deg,#D6EEFF,#8FCBFF)}
+.p6{background:linear-gradient(160deg,#FFE3CF,#FFAE8A)}
+.milestone{display:flex;gap:14px;align-items:center}
+.countdown{width:66px;height:66px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none}
+.countdown b{font-family:var(--display);font-size:26px;line-height:1;font-variant-numeric:tabular-nums}
+.countdown small{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+
+/* Nearby */
+.filters{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-inline:-20px;padding-inline:20px}
+.filters::-webkit-scrollbar{display:none}
+.filters button{flex:none;padding:7px 14px;border-radius:999px;border:2px solid var(--line);background:var(--surface);font-size:13px;font-weight:700}
+.filters button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.place{display:flex;gap:12px;align-items:center}
+.place .ic{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex:none}
+.stars{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* Onboarding + paywall */
+.hero-on{display:flex;flex-direction:column;gap:16px;padding-top:18px}
+.hero-on h1{font-size:40px;font-weight:700;line-height:1.02;letter-spacing:-.01em}
+.hero-on h1 em{font-style:normal;color:var(--accent)}
+.blob{height:220px;border-radius:120px 120px 36px 36px;background:linear-gradient(180deg,var(--lilac-soft),var(--accent-soft));position:relative;overflow:hidden}
+.blob svg{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:999px;font-weight:800;font-size:16px}
+.btn.primary{background:var(--accent);color:var(--accent-ink);box-shadow:0 6px 0 -1px color-mix(in srgb,var(--accent) 55%,var(--ink))}
+.btn.primary:active{transform:translateY(3px);box-shadow:0 3px 0 -1px color-mix(in srgb,var(--accent) 55%,var(--ink))}
+.btn.ghost{background:var(--surface);border:2px solid var(--line)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;font-weight:700}
+.field input{padding:13px 16px;border-radius:999px;border:2px solid var(--line);background:var(--surface);font:inherit;color:var(--ink)}
+.plan{border:3px solid var(--accent);border-radius:28px;padding:16px;background:var(--surface);display:flex;flex-direction:column;gap:10px}
+.plan .price{font-family:var(--display);font-size:44px;font-weight:700;color:var(--accent);line-height:1}
+.plan .price small{font-size:15px;font-weight:700;color:var(--muted)}
+.ticks{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.ticks li{display:flex;gap:10px;align-items:flex-start}
+.ticks svg{flex:none;margin-top:2px;color:var(--good)}
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl{display:flex;gap:12px;align-items:flex-start;position:relative;padding-bottom:14px}
+.tl:not(:last-child)::before{content:"";position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--line)}
+.tl .dot{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:11px;font-weight:800}
+.fine{font-size:12px;color:var(--muted);text-align:center}
+
+/* Tab bar */
+.tabbar{display:grid;grid-template-columns:repeat(6,1fr);border-top:2px solid var(--line);background:var(--phone);padding:8px 6px 18px}
+.tabbar button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:700;color:var(--muted);padding:4px 0}
+.tabbar button[aria-current="page"]{color:var(--accent)}
+.fab{position:absolute;right:18px;bottom:92px;width:58px;height:58px;border-radius:50%;background:var(--accent);color:var(--accent-ink);border:4px solid var(--surface);display:grid;place-items:center;box-shadow:var(--shadow)}
+
+/* Sheet + toast */
+.scrim{position:absolute;inset:0;background:rgba(20,28,30,.4);display:flex;align-items:flex-end;z-index:5}
+.sheet{background:var(--phone);width:100%;border-radius:28px 28px 0 0;padding:10px 20px 26px;display:flex;flex-direction:column;gap:14px}
+.grab{width:40px;height:5px;border-radius:9px;background:var(--line);margin:0 auto}
+.qgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.qgrid button{background:var(--surface);border:2px solid var(--line);border-radius:22px;color:var(--accent);padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;font-weight:700}
+.toast{position:absolute;left:50%;bottom:100px;transform:translateX(-50%);background:var(--accent);color:var(--accent-ink);padding:10px 16px;border-radius:999px;font-size:13px;font-weight:700;z-index:6;white-space:nowrap}
+
+
+/* Vet, insurance, emergency */
+.sos{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--alert);color:var(--alert-ink);border-radius:24px;padding:12px 14px;box-shadow:0 6px 0 -1px color-mix(in srgb,var(--alert) 60%,var(--ink))}
+.sos .ic{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;flex:none}
+.sos b{font-family:var(--display);font-weight:600;font-size:17px;display:block}
+.sos small{font-size:12.5px;opacity:.9}
+.sos-mini{display:inline-flex;align-items:center;gap:6px;background:var(--alert);color:var(--alert-ink);font-weight:800;font-size:12.5px;padding:7px 12px;border-radius:999px}
+.ins{background:linear-gradient(135deg,var(--sky-soft),var(--lilac-soft));border:2px solid var(--surface);border-radius:26px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.ins-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.ins-top b{font-family:var(--display);font-weight:600;font-size:18px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.kv div{min-width:0}
+.kv .k{font-size:11.5px;color:var(--muted);font-weight:700}
+.kv .v{font-weight:800;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.limit{display:flex;flex-direction:column;gap:6px}
+.limit .bar i{background:linear-gradient(90deg,var(--sky),var(--lilac))}
+.btnrow{display:flex;gap:8px}
+.btnrow .btn{padding:11px;font-size:14px}
+.copyline{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface-2);border:2px solid var(--line);border-radius:18px;padding:10px 12px}
+.copyline .num{font-family:var(--display);font-weight:600;font-size:18px;font-variant-numeric:tabular-nums;user-select:all}
+.copyline button{font-size:12.5px;font-weight:800;color:var(--accent)}
+.hosp .ic{width:42px;height:42px;border-radius:50%;background:var(--alert-soft);color:var(--alert);display:grid;place-items:center;flex:none;font-family:var(--display);font-weight:700;font-size:13px}
+.pill.open{background:var(--good-soft);color:var(--good)}
+.pill.alert{background:var(--alert-soft);color:var(--alert)}
+.gps{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--muted)}
+.gps i{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px var(--good-soft)}
+.em-head{display:flex;flex-direction:column;gap:4px}
+.em-card{border:3px solid var(--alert);border-radius:24px;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--surface)}
+
+/* Pack feed */
+.stories{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;margin-inline:-20px;padding:2px 20px 4px}
+.stories::-webkit-scrollbar{display:none}
+.story{flex:none;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;font-weight:700;width:64px}
+.ring{width:62px;height:62px;border-radius:50%;padding:3px;background:conic-gradient(var(--accent),var(--butter),var(--lilac),var(--sky),var(--accent))}
+.ring.seen{background:var(--line)}
+.ring .face{width:100%;height:100%;border-radius:50%;border:3px solid var(--phone);display:grid;place-items:center;overflow:hidden}
+.ring.add{background:none;border:2.5px dashed var(--accent);display:grid;place-items:center;color:var(--accent)}
+.dogsonly{display:flex;align-items:center;gap:10px;background:var(--butter-soft);border-radius:20px;padding:10px 14px;font-size:13px}
+.post{background:var(--surface);border:2px solid var(--line);border-radius:28px;overflow:hidden}
+.post-h{display:flex;align-items:center;gap:10px;padding:12px 14px}
+.post-h .face{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;overflow:hidden;flex:none}
+.post-h .grow{flex:1;min-width:0}
+.post-h b{font-family:var(--display);font-weight:600;font-size:16px}
+.post-h .s{font-size:12px;color:var(--muted)}
+.tag{font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:99px;background:var(--lilac-soft);color:var(--ink);margin-left:4px;vertical-align:2px}
+.post-img{aspect-ratio:1/1;max-width:100%;position:relative;display:grid;place-items:center;overflow:hidden;cursor:pointer;user-select:none}
+.post-img svg.dog{width:62%;height:auto}
+.post-img .loc{position:absolute;left:12px;bottom:12px;font-size:11.5px;font-weight:800;background:rgba(255,255,255,.9);color:#43294F;padding:4px 10px;border-radius:99px}
+.post-img .pop{position:absolute;color:#fff;opacity:0;transform:scale(.4);transition:opacity .2s,transform .3s cubic-bezier(.3,1.6,.5,1);filter:drop-shadow(0 4px 10px rgba(0,0,0,.2))}
+.post-img .pop.on{opacity:1;transform:scale(1)}
+.post-a{display:flex;align-items:center;gap:16px;padding:10px 14px 4px}
+.post-a button{display:flex;align-items:center;gap:6px;font-weight:800;font-size:13.5px;font-variant-numeric:tabular-nums}
+.post-a button[aria-pressed="true"]{color:var(--accent)}
+.post-a button[aria-pressed="true"] svg{fill:currentColor}
+.post-c{padding:2px 14px 14px;font-size:14px}
+.post-c .s{font-size:12px;color:var(--muted);margin-top:4px}
+.follow{font-size:12.5px;font-weight:800;padding:7px 14px;border-radius:999px;background:var(--accent);color:var(--accent-ink);flex:none}
+.follow[aria-pressed="true"]{background:var(--surface-2);color:var(--muted);border:2px solid var(--line);padding:5px 12px}
+@media (prefers-reduced-motion:reduce){.post-img .pop{transition:none}}
+
+@media (max-width:760px){
+  body{padding-block:0}
+  .note{display:none}
+  .stage{gap:0;align-items:stretch}
+  .phone{width:100%;height:100%;min-height:0;border-radius:0;border:0;box-shadow:none;margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
+  .phone{width:calc(100% + max(16px,env(safe-area-inset-left,0px)) + max(16px,env(safe-area-inset-right,0px)));max-width:none}
+  .statusbar{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Gruff working-app additions */
+.sheet{max-height:88%;overflow-y:auto}
+.empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:22px 12px;color:var(--muted)}
+.empty b{font-family:var(--display);font-weight:600;font-size:17px;color:var(--ink)}
+.empty .btn{margin-top:6px}
+.preview-banner{background:var(--butter-soft);color:var(--ink);font-size:12.5px;font-weight:700;padding:8px 16px;text-align:center}
+textarea{padding:12px 16px;border-radius:20px;border:2px solid var(--line);background:var(--surface);font:inherit;color:var(--ink);min-height:84px;resize:vertical}
+select{padding:12px 16px;border-radius:999px;border:2px solid var(--line);background:var(--surface);font:inherit;color:var(--ink)}
+.field input,.field select,.field textarea{width:100%}
+.form{display:flex;flex-direction:column;gap:12px}
+.form .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form .row2>*{min-width:0}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.swatch{width:40px;height:40px;border-radius:50%;border:3px solid var(--surface);box-shadow:0 0 0 2px var(--line);overflow:hidden;display:grid;place-items:center}
+.swatch[aria-pressed="true"]{box-shadow:0 0 0 3px var(--accent)}
+.avatar img,.face img,.ph img,.post-img img,.av img{width:100%;height:100%;object-fit:cover;display:block}
+.av{border-radius:50%;overflow:hidden;display:grid;place-items:center;flex:none}
+.ph{cursor:pointer;border:0;padding:6px}
+.ph img{position:absolute;inset:0}
+.ph span{position:relative}
+.post-img img{position:absolute;inset:0}
+.post-img .loc{z-index:1}
+.post-img .pop{z-index:2}
+.xbtn{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:var(--muted);flex:none}
+.xbtn:hover{background:var(--surface-2);color:var(--alert)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{padding:7px 12px;border-radius:999px;border:2px dashed var(--lilac);font-size:12.5px;font-weight:800;color:var(--ink)}
+.linkrow{display:flex;align-items:center;gap:12px;padding:12px 2px;border-top:2px solid var(--line);text-decoration:none;color:inherit}
+.linkrow:first-child{border-top:0}
+.linkrow .grow{flex:1;min-width:0}
+.linkrow .t{font-weight:700}
+.linkrow .s{font-size:12.5px;color:var(--muted)}
+.linkrow .go{color:var(--accent);font-weight:800;font-size:13px;white-space:nowrap}
+.bigphoto{border-radius:22px;overflow:hidden;aspect-ratio:1;max-width:100%;background:var(--surface-2)}
+.bigphoto img{width:100%;height:100%;object-fit:cover;display:block}
+.confirm{display:flex;flex-direction:column;gap:8px;background:var(--alert-soft);border-radius:18px;padding:12px}
+.loading{display:grid;place-items:center;min-height:60vh;color:var(--muted);font-weight:700}
+.row .t,.row .s{overflow-wrap:anywhere}
+.stat-note{font-size:12px;color:var(--muted)}
+
+.auth-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12.5px;font-weight:700}
+.auth-or::before,.auth-or::after{content:"";flex:1;height:2px;background:var(--line)}
+.gbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;border-radius:999px;background:var(--surface);border:2px solid var(--line);font-weight:800;font-size:15px}
+.legal{font-size:12px;color:var(--muted);text-align:center}
+.legal a{color:var(--muted)}
+.btn[disabled],.gbtn[disabled]{opacity:.6;pointer-events:none}
+.treats{display:flex;flex-direction:column;gap:10px}
+.bones{display:flex;gap:6px;flex-wrap:wrap}
+.bone{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);border:2px solid var(--line);color:var(--muted)}
+.bone.on{background:var(--butter);border-color:var(--butter);color:#43294F}
+.bone.over{background:var(--alert);border-color:var(--alert);color:#fff}
+.treat-status{font-weight:800;font-size:15px}
+.treat-status.over{color:var(--alert)}
+.treat-status.full{color:#B07D00}
+.stepper{display:flex;align-items:center;gap:14px}
+.stepper button{width:44px;height:44px;border-radius:50%;border:2px solid var(--line);background:var(--surface);font-size:22px;font-weight:800;color:var(--accent)}
+.stepper output{font-family:var(--display);font-size:30px;font-weight:700;min-width:36px;text-align:center;font-variant-numeric:tabular-nums}
+.chips button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-style:solid;border-color:var(--accent)}
+.warn{background:var(--alert-soft);color:var(--ink);border-radius:16px;padding:10px 12px;font-size:13.5px}
+.code{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.02em;overflow-wrap:anywhere;user-select:all}
+</style>
+<script src="config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<div class="stage">
+  <aside class="note">
+    <div class="eyebrow">Free beta</div>
+    <div class="wordmark"><span class="nm-l">awoo</span><span>.</span></div>
+    <p><b>For cat and dog pawrents.</b> Health records and reminders, a shared treat tracker, the daily routine, vet and insurance details, a memory book, and the Pack: a pets-only feed for your friends.</p>
+    <div class="price"><span class="chip">14-day free trial</span><span class="chip">then $5 / month</span><span class="chip">Cancel anytime</span></div>
+    <p style="font-size:13.5px">Sign up free and add your cats and dogs. Their records are private to you and anyone you share them with. Posts and boops in the Pack are shared with everyone using the app. Free while we're in beta.</p>
+    <p style="font-size:13px">On your phone, open this page and choose <b>Add to Home Screen</b> to use it like an app. · <a href="privacy.html" style="color:var(--accent)">Privacy</a></p>
+  </aside>
+
+  <div class="phone" id="phone">
+    <div class="statusbar"><span>9:41</span><span>5G ▮▮▮</span></div>
+    <div class="preview-banner" id="previewBanner" hidden>Preview with sample data. Nothing you enter here is saved.</div>
+    <div class="screens" id="screens">
+
+      <!-- SIGN IN -->
+      <section class="screen" id="auth" hidden>
+        <div class="hero-on" style="padding-top:28px">
+          <div class="wordmark" style="font-family:var(--display);font-weight:700;font-size:56px;line-height:.9;color:var(--accent)"><span class="nm-l">awoo</span><span style="color:var(--lilac)">.</span></div>
+          <h1 style="font-size:32px">Your pet's whole life, <em>organised.</em></h1>
+          <p style="color:var(--muted)">For cat and dog pawrents. Health records, reminders, a shared treat tracker, vet and insurance details, memories, and a pets-only feed for your friends.</p>
+        </div>
+        <button class="gbtn" data-action="google" id="gbtn"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Continue with Google</button>
+        <div class="auth-or">or use email</div>
+        <form class="form" id="authForm" novalidate>
+          <div class="field"><label for="a_email">Email</label><input id="a_email" type="email" autocomplete="email" inputmode="email"></div>
+          <div class="field"><label for="a_pass">Password</label><input id="a_pass" type="password" autocomplete="current-password"></div>
+          <p class="stat-note" id="a_err" role="alert" hidden style="color:var(--alert)"></p>
+          <button class="btn primary" type="submit" id="authSubmit">Sign in</button>
+        </form>
+        <button class="linkbtn" data-action="authToggle" id="authToggle" style="align-self:center;text-decoration:none">New here? <b>Create an account</b></button>
+        <button class="linkbtn" data-action="forgot" style="align-self:center;font-size:13px">Forgot password?</button>
+        <p class="legal">Free while we're in beta. <a href="privacy.html">Privacy policy</a></p>
+      </section>
+
+      <!-- WELCOME (static so typing is never interrupted) -->
+      <section class="screen" id="welcome" hidden>
+        <div class="hero-on">
+          <div class="blob" aria-hidden="true">
+            <svg width="230" height="190" viewBox="0 0 230 190" fill="none">
+              <ellipse cx="115" cy="200" rx="95" ry="70" fill="#FFB98A"/>
+              <ellipse cx="115" cy="95" rx="62" ry="58" fill="#FFCFA3"/>
+              <ellipse cx="62" cy="80" rx="20" ry="40" transform="rotate(20 62 80)" fill="#E99B6E"/>
+              <ellipse cx="168" cy="80" rx="20" ry="40" transform="rotate(-20 168 80)" fill="#E99B6E"/>
+              <ellipse cx="82" cy="108" rx="10" ry="6" fill="#FF8DBC" opacity=".55"/><ellipse cx="148" cy="108" rx="10" ry="6" fill="#FF8DBC" opacity=".55"/>
+              <circle cx="95" cy="88" r="7.5" fill="#43294F"/><circle cx="135" cy="88" r="7.5" fill="#43294F"/>
+              <circle cx="97" cy="85" r="2.2" fill="#fff"/><circle cx="137" cy="85" r="2.2" fill="#fff"/>
+              <ellipse cx="115" cy="118" rx="22" ry="17" fill="#FCE3C5"/>
+              <ellipse cx="115" cy="110" rx="10" ry="7" fill="#43294F"/>
+              <path d="M108 128q7 7 14 0" stroke="#43294F" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="eyebrow">Welcome to <span class="nm-l">awoo</span></div>
+          <h1>Your pet's whole life, <em>organised.</em></h1>
+          <p style="color:var(--muted)">Tell us about your pet. You can add more later.</p>
+        </div>
+        <form class="form" id="welcomeForm" novalidate>
+          <div class="field"><label>Cat or dog?</label><div class="segment" role="group" aria-label="Cat or dog" id="w_species"><button type="button" data-species="dog" aria-pressed="true">Dog</button><button type="button" data-species="cat" aria-pressed="false">Cat</button></div></div>
+          <div class="field"><label for="w_name">Pet's name</label><input id="w_name" required autocomplete="off" placeholder="e.g. Biscuit"></div>
+          <div class="field"><label for="w_breed">Breed</label><input id="w_breed" autocomplete="off" placeholder="e.g. Cavoodle"></div>
+          <div class="row2">
+            <div class="field"><label for="w_bday">Birthday</label><input id="w_bday" type="date"></div>
+            <div class="field"><label for="w_gotcha">Gotcha day</label><input id="w_gotcha" type="date"></div>
+          </div>
+          <div class="field"><label>Fur colour (for their cartoon)</label><div class="swatches" id="w_furs"></div></div>
+          <div class="field"><label for="w_handle">Your Pack handle</label><input id="w_handle" autocomplete="off" placeholder="e.g. brooke.and.biscuit"></div>
+          <p class="stat-note" id="w_err" hidden style="color:var(--alert)">Add your pet's name to continue.</p>
+          <button class="btn primary" type="submit">Continue</button>
+        </form>
+        <button class="linkbtn" data-action="joinOpen" style="align-self:center;text-decoration:none">Your partner already set up your pets? <b>Join with their code</b></button>
+        <p class="fine">Breeder or pet business? Pro accounts are coming soon.</p>
+      </section>
+
+      <!-- PAYWALL -->
+      <section class="screen" id="paywall" hidden>
+        <div class="hello"><div class="eyebrow">Your free trial</div><h2 style="font-size:28px" id="pwTitle">Try everything free for 14 days</h2></div>
+        <div class="plan">
+          <div class="price">$5 <small>/ month after trial</small></div>
+          <ul class="ticks">
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Health records, vaccine and med reminders</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Vet, insurance and emergency details in one place</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Unlimited photos, milestones and posts to your Pack</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Up to 4 pets on one plan, cats and dogs</li>
+          </ul>
+        </div>
+        <div class="timeline">
+          <div class="tl"><div class="dot" style="background:var(--good);color:#fff">✓</div><div><b>Today</b><div style="color:var(--muted);font-size:13px">Full access starts. No charge.</div></div></div>
+          <div class="tl"><div class="dot" style="background:var(--butter);color:#43294F">12</div><div><b>Day 12</b><div style="color:var(--muted);font-size:13px">We remind you before the trial ends.</div></div></div>
+          <div class="tl"><div class="dot" style="background:var(--accent-soft);color:var(--accent)">$</div><div><b>Day 15</b><div style="color:var(--muted);font-size:13px">$5 a month begins. Cancel any time before.</div></div></div>
+        </div>
+        <button class="btn primary" data-action="startTrial">Start my free trial</button>
+        <p class="fine">Free during the beta. No card needed.</p>
+      </section>
+
+      <!-- Everything else is drawn from saved data -->
+      <section class="screen" id="dyn"><div class="loading">Fetching your pack…</div></section>
+    </div>
+
+    <button class="fab" id="fab" aria-label="Add a log" data-action="logMenu" hidden><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+
+    <nav class="tabbar" id="tabbar" aria-label="Main" hidden>
+      <button data-go="today"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Today</button>
+      <button data-go="pack"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><circle cx="17" cy="9.5" r="2.4"/><path d="M3 20c.6-3.5 3-5.5 6-5.5s5.4 2 6 5.5M15.5 14.6c2.6-.4 4.8 1.2 5.5 4.4"/></svg>Pack</button>
+      <button data-go="health"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5 5 0 0 0-8.8-1 5 5 0 0 0-8.8 1C1.9 9.8 12 20 12 20s10.1-10.2 8.8-14.4z"/><path d="M7 11h3l1.5-2.5L13 13l1.5-2H17"/></svg>Health</button>
+      <button data-go="routine"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Routine</button>
+      <button data-go="memories"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="15" rx="3"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-8 8"/></svg>Memories</button>
+      <button data-go="nearby"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Nearby</button>
+    </nav>
+
+    <div class="scrim" id="scrim" hidden><div class="sheet" role="dialog" aria-modal="true" id="sheet"></div></div>
+    <div class="toast" id="toast" role="status" hidden></div>
+    <input type="file" id="filepick" accept="image/*" hidden>
+  </div>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="dog" viewBox="0 0 120 120"><ellipse cx="30" cy="48" rx="14" ry="28" transform="rotate(22 30 48)" fill="currentColor"/><ellipse cx="30" cy="48" rx="14" ry="28" transform="rotate(22 30 48)" fill="#43294F" opacity=".18"/><ellipse cx="90" cy="48" rx="14" ry="28" transform="rotate(-22 90 48)" fill="currentColor"/><ellipse cx="90" cy="48" rx="14" ry="28" transform="rotate(-22 90 48)" fill="#43294F" opacity=".18"/><ellipse cx="60" cy="62" rx="40" ry="38" fill="currentColor"/><ellipse cx="60" cy="80" rx="17" ry="13" fill="#fff" opacity=".7"/><circle cx="46" cy="58" r="5" fill="#43294F"/><circle cx="74" cy="58" r="5" fill="#43294F"/><circle cx="47.5" cy="56" r="1.6" fill="#fff"/><circle cx="75.5" cy="56" r="1.6" fill="#fff"/><ellipse cx="60" cy="73" rx="7" ry="5" fill="#43294F"/><path d="M55 84q5 5 10 0" stroke="#43294F" stroke-width="2.5" fill="none" stroke-linecap="round"/><ellipse cx="36" cy="72" rx="6" ry="3.6" fill="#FF6FA8" opacity=".5"/><ellipse cx="84" cy="72" rx="6" ry="3.6" fill="#FF6FA8" opacity=".5"/></symbol>
+    <symbol id="cat" viewBox="0 0 120 120"><path d="M23 60 L27 14 L54 36 Z" fill="currentColor"/><path d="M97 60 L93 14 L66 36 Z" fill="currentColor"/><path d="M23 60 L27 14 L54 36 Z" fill="#43294F" opacity=".12"/><path d="M97 60 L93 14 L66 36 Z" fill="#43294F" opacity=".12"/><path d="M31 27 L33 42 L44 36 Z" fill="#FF8DBC" opacity=".7"/><path d="M89 27 L87 42 L76 36 Z" fill="#FF8DBC" opacity=".7"/><ellipse cx="60" cy="66" rx="40" ry="36" fill="currentColor"/><ellipse cx="60" cy="81" rx="15" ry="10" fill="#fff" opacity=".7"/><ellipse cx="46" cy="62" rx="5" ry="6" fill="#43294F"/><ellipse cx="74" cy="62" rx="5" ry="6" fill="#43294F"/><circle cx="47.5" cy="60" r="1.6" fill="#fff"/><circle cx="75.5" cy="60" r="1.6" fill="#fff"/><path d="M56 73 L64 73 L60 78 Z" fill="#FF6FA8"/><path d="M60 78 q-4 5 -8 2 M60 78 q4 5 8 2" stroke="#43294F" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M38 77 L16 73 M38 81 L17 86 M82 77 L104 73 M82 81 L103 86" stroke="#43294F" stroke-width="1.6" stroke-linecap="round" opacity=".5"/><ellipse cx="35" cy="73" rx="6" ry="3.6" fill="#FF6FA8" opacity=".45"/><ellipse cx="85" cy="73" rx="6" ry="3.6" fill="#FF6FA8" opacity=".45"/></symbol>
+    <symbol id="heartpaw" viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-7.5-10a4.2 4.2 0 0 1 7.5-2.6 4.2 4.2 0 0 1 7.5 2.6c0 5.4-7.5 10-7.5 10z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <g id="paw"><ellipse cx="12" cy="16" rx="5" ry="4.2"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.5" r="2.2"/><circle cx="14" cy="6.5" r="2.2"/><circle cx="18" cy="10" r="2.2"/></g>
+  </defs>
+</svg>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clone=o=>JSON.parse(JSON.stringify(o||{}));
+const DAY=864e5, pad=n=>String(n).padStart(2,"0");
+const dkey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const todayKey=()=>dkey(new Date());
+const parseD=s=>{ if(!s||!/^\d{4}-\d{2}-\d{2}$/.test(s)) return null; const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); };
+const midnight=()=>{const t=new Date(); t.setHours(0,0,0,0); return t;};
+const daysUntil=s=>{const d=parseD(s); return d? Math.round((d-midnight())/DAY):null;};
+const addDays=(s,n)=>{const d=parseD(s)||midnight(); d.setDate(d.getDate()+n); return dkey(d);};
+const fmtD=s=>{const d=parseD(s); return d? d.toLocaleDateString("en-AU",{day:"numeric",month:"short",year:"numeric"}):"";};
+const fmtDM=s=>{const d=parseD(s); return d? d.toLocaleDateString("en-AU",{day:"numeric",month:"short"}):"";};
+const fmtTime=t=>{ if(!t||!/^\d{1,2}:\d{2}/.test(t)) return t||""; let [h,m]=t.split(":").map(Number); const ap=h>=12?"pm":"am"; h=h%12||12; return `${h}:${pad(m)}${ap}`; };
+const ago=ms=>{const m=Math.floor((Date.now()-ms)/6e4); if(m<1)return"just now"; if(m<60)return m+"m"; const h=Math.floor(m/60); if(h<24)return h+"h"; const d=Math.floor(h/24); return d<7? d+"d" : new Date(ms).toLocaleDateString("en-AU",{day:"numeric",month:"short"});};
+const rid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const num=v=>{const n=parseFloat(String(v).replace(",",".")); return isFinite(n)?n:null;};
+const money=n=>n==null?"":"$"+Number(n).toLocaleString("en-AU",{maximumFractionDigits:2});
+const FURS=[{fur:"#F7C873",bg:"#FFF1A8"},{fur:"#E9C9A8",bg:"#FFD6E7"},{fur:"#B9774A",bg:"#D6EEFF"},{fur:"#8C8C98",bg:"#C9F5E3"},{fur:"#F3E6D6",bg:"#E3D8FF"},{fur:"#3A3340",bg:"#FFE3CF"},{fur:"#C0703F",bg:"#FFF1A8"},{fur:"#FFFFFF",bg:"#E3D8FF"}];
+const furOf=i=>FURS[(i|0)%FURS.length];
+const sp=x=>x&&x.species==="cat"?"cat":"dog";
+const IMG=new Map(), IMG_PENDING=new Set();
+const BLANK="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+const imgSrc=id=>!id?"":id.startsWith("local:")?id.slice(6):id.startsWith("data:")?id:(IMG.get(id)||"");
+const imgAttr=id=>`data-img="${esc(id||"")}" src="${esc(imgSrc(id)||BLANK)}"`;
+function hydrate(){
+  if(!S.db) return;
+  document.querySelectorAll("img[data-img]").forEach(el=>{
+    const id=el.dataset.img; if(!id||!id.startsWith("img:")) return;
+    if(IMG.has(id)){ if(el.getAttribute("src")!==IMG.get(id)) el.src=IMG.get(id); return; }
+    if(IMG_PENDING.has(id)) return; IMG_PENDING.add(id);
+    S.db.collection("images").doc(id.slice(4)).get().then(snap=>{
+      const d=snap.exists?snap.data():null; IMG.set(id,(d&&d.data)||BLANK); IMG_PENDING.delete(id);
+      document.querySelectorAll("img[data-img]").forEach(e=>{ if(e.dataset.img===id) e.src=IMG.get(id); });
+    }).catch(()=>IMG_PENDING.delete(id));
+  });
+}
+const MAPS=q=>"https://www.google.com/maps/search/"+encodeURIComponent(q);
+const ICON={
+  play:'<circle cx="12" cy="12" r="8"/><path d="M5 9c4 1 10 1 14 0M5 15c4-1 10-1 14 0M12 4c-2 5-2 11 0 16"/>',
+  treat:'<path d="M7.5 9.5a2.5 2.5 0 1 1-1-4.3A2.5 2.5 0 1 1 10.8 4l6.4 6.4h0a2.5 2.5 0 1 1 3.3 4.3 2.5 2.5 0 1 1-4.3 3.3l-6.4-6.4a2.5 2.5 0 0 1-2.3-2.1z"/>',
+  walk:'<path d="M13 4a2 2 0 1 0 0 .1M10 21l2-6-3-3 1-4 4 3 3 1M7 13l-2 8"/>',
+  meal:'<path d="M4 13h16a8 8 0 0 1-16 0zM8 9c0-2 2-2 2-4M13 9c0-2 2-2 2-4"/>',
+  meds:'<rect x="3" y="8" width="18" height="8" rx="4" transform="rotate(-35 12 12)"/><path d="M9.5 8.5l5 7"/>',
+  weight:'<rect x="3" y="4" width="18" height="16" rx="4"/><path d="M8 10a4 4 0 0 1 8 0M12 10l2-2"/>',
+  photo:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+  note:'<path d="M6 3h9l4 4v14H6zM9 12h7M9 16h5"/>',
+  reminderAdd:'<path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0"/>',
+  reminder:'<path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0"/>'
+};
+const ico=(k,s=20)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON[k]||ICON.note}</svg>`;
+const X='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+
+const NAME=((window.APP_CONFIG||{}).name||"Awoo").trim();
+const S={speciesPick:"dog",mode:"loading",uid:null,hid:null,dogBase:{},homeSubs:[],homeMembers:[],db:null,auth:null,email:"",subs:[],canPhotos:true,profile:null,dogs:[],dogId:null,logs:[],pack:{},boops:{},screen:"today",feed:"everyone",hseg:"records",furPick:0,composer:null};
+
+/* ---------- saving ---------- */
+const chains={};
+function queue(key,fn){ const p=(chains[key]||Promise.resolve()).then(fn); chains[key]=p.catch(()=>{}); return p; }
+let warned=false;
+function writeErr(e){
+  const c=e&&e.code;
+  if(c==="resource-exhausted") toast("We've hit today's free limit. Try again tomorrow.");
+  else if(c==="permission-denied"){ if(!warned){ warned=true; toast("That didn't save. Try signing out and back in."); } }
+  else if(c==="invalid-argument") toast("That's too big to save. Try something shorter or a smaller photo.");
+  else toast("Couldn't save that. Check your connection and try again.");
+}
+function put(path,data){ if(!S.db) return Promise.resolve(); return queue(path,()=>S.db.doc(path).set(data)).catch(writeErr); }
+function del(path){ if(!S.db) return Promise.resolve(); return queue(path,()=>S.db.doc(path).delete()).catch(writeErr); }
+const P={
+  profile:()=>`users/${S.uid}`,
+  home:()=>`households/${S.hid}`,
+  dog:id=>`households/${S.hid}/dogs/${id}`,
+  log:id=>`households/${S.hid}/logs/${id}`,
+  pack:()=>`pack/${S.uid}`,
+  boop:()=>`boops/${S.uid}`
+};
+const dog=()=>S.dogs.find(d=>d.id===S.dogId)||S.dogs[0]||null;
+function strip(o){ const c=clone(o); delete c.id; return c; }
+const keyMap=o=>{ const m={}; Object.keys(o||{}).forEach(k=>m[k]=JSON.stringify(o[k])); return m; };
+function saveDog(d){
+  d.updated=Date.now();
+  const i=S.dogs.findIndex(x=>x.id===d.id); if(i>=0) S.dogs[i]=d; else S.dogs.push(d);
+  writeDog(d); syncPack(); render();
+}
+/* Write only the fields that changed, so two people editing at once don't overwrite each other. */
+function writeDog(d){
+  if(!S.db||!S.hid) return;
+  const body=strip(d), base=S.dogBase[d.id], path=P.dog(d.id);
+  S.dogBase[d.id]=keyMap(body);
+  if(!base){ put(path,body); return; }
+  const ch={}; Object.keys(body).forEach(k=>{ if(JSON.stringify(body[k])!==base[k]) ch[k]=body[k]; });
+  Object.keys(base).forEach(k=>{ if(!(k in body)) ch[k]=firebase.firestore.FieldValue.delete(); });
+  if(!Object.keys(ch).length) return;
+  queue(path,()=>S.db.doc(path).update(ch)).catch(e=>{ if(e&&e.code==="not-found") put(path,body); else writeErr(e); });
+}
+function byName(){ return (S.profile&&S.profile.handle)||(S.email||"").split("@")[0]||"You"; }
+function saveProfile(){ put(P.profile(),clone(S.profile)); render(); }
+function addLog(entry){
+  const d=dog(); if(!d) return;
+  const l=Object.assign({id:rid(),dogId:d.id,time:Date.now(),by:byName(),byUid:S.uid},entry);
+  S.logs.unshift(l); put(P.log(l.id),strip(l)); render();
+}
+function delLog(id){ S.logs=S.logs.filter(l=>l.id!==id); render(); if(S.db&&S.hid) del(P.log(id)); }
+function myPack(){ return clone(S.pack[S.uid]||{posts:[]}); }
+function syncPack(posts){
+  if(!S.profile) return;
+  const d=S.dogs[0]; if(!d) return;
+  const cur=myPack();
+  const next={handle:S.profile.handle||"",dogName:d.name,breed:d.breed||"",species:sp(d),fur:d.fur|0,photoId:d.photoId||null,dogs:S.dogs.length,posts:posts||cur.posts||[]};
+  if(JSON.stringify(next)===JSON.stringify(S.pack[S.uid])) return;
+  S.pack[S.uid]=next; put(P.pack(),clone(next));
+}
+
+/* ---------- start-up ---------- */
+const SAMPLE=()=>{
+  const t=todayKey();
+  return {
+    profile:{handle:"you.and.biscuit",trialStart:Date.now()-2*DAY,plan:"trial",onboarded:true,following:["s1"]},
+    dogs:[{id:"d1",created:1,treatLimit:3,name:"Biscuit",breed:"Cavoodle",birthday:"2023-07-14",gotchaDay:"2023-11-10",fur:1,microchip:"",
+      routine:[{id:"r1",time:"07:00",task:"Breakfast",who:"Sam"},{id:"r2",time:"07:30",task:"Morning walk",who:"Sam"},{id:"r3",time:"18:00",task:"Dinner",who:"You"},{id:"r4",time:"18:30",task:"Evening walk",who:"You"}],
+      done:{[t]:["r1","r2"]},
+      reminders:[{id:"m1",title:"Flea & tick chew",due:t,every:30},{id:"m2",title:"Worming tablet",due:addDays(t,32),every:90}],
+      vaccines:[{id:"v1",name:"C5 (incl. kennel cough)",given:"2026-03-14",due:"2027-03-14"}],
+      weights:[{date:addDays(t,-150),kg:8.1},{date:addDays(t,-120),kg:8.0},{date:addDays(t,-90),kg:8.2},{date:addDays(t,-60),kg:8.3},{date:addDays(t,-30),kg:8.2},{date:t,kg:8.4}],
+      notes:"Scratching left ear after swims. Started about 10 Oct.",
+      vet:{clinic:"Your local vet (example)",vetName:"",phone:"",address:"",hours:"8am to 6pm",nextAppt:addDays(t,4)},
+      insurance:{insurer:"Example insurer",policy:"ABC-123456",cover:"80",excess:"100",premium:"52.40",renews:"2027-02-03",claims:"",limit:"12000",used:"760"},
+      emergency:{name:"",phone:"",address:""},
+      photos:[],milestones:[{id:"ms1",title:"Learned \"leave it\"",date:"2026-10-02"}],team:[{id:"tm1",name:"Sam",role:"Partner"}]},
+      {id:"d2",created:2,species:"cat",treatLimit:2,name:"Mochi",breed:"Ragdoll",birthday:"2024-03-02",gotchaDay:"2024-05-20",fur:4,
+      routine:[{id:"c1",time:"07:00",task:"Breakfast",who:"You"},{id:"c2",time:"18:00",task:"Dinner",who:"Sam"},{id:"c3",time:"20:00",task:"Scoop the litter",who:"Sam"}],
+      done:{},reminders:[{id:"cm1",title:"Flea treatment",due:addDays(t,6),every:30}],vaccines:[],weights:[{date:t,kg:4.6}],notes:"",vet:{},insurance:{},emergency:{},photos:[],milestones:[],team:[]}],
+    logs:[{id:"t1",dogId:"d1",type:"treat",note:"Dental stick",qty:1,by:"sam",time:Date.now()-2*36e5},{id:"t2",dogId:"d1",type:"treat",note:"Liver treat",qty:1,by:"you.and.biscuit",time:Date.now()-60*6e4},{id:"t3",dogId:"d1",type:"treat",note:"Liver treat",qty:2,by:"sam",time:Date.now()-DAY},{id:"l1",dogId:"d1",type:"walk",km:2.4,minutes:30,note:"New Farm Park",time:Date.now()-3*36e5},{id:"l2",dogId:"d1",type:"meal",note:"Half cup kibble",time:Date.now()-4*36e5},{id:"l3",dogId:"d1",type:"walk",km:3.1,minutes:40,note:"",time:Date.now()-DAY*2}],
+    pack:{
+      s1:{handle:"pickle.the.frenchie",dogName:"Pickle",breed:"French Bulldog",fur:1,posts:[{id:"p1",dogName:"Pickle",breed:"French Bulldog",fur:1,caption:"Sunday zoomies. She ran straight into the river again.",loc:"Teneriffe",time:Date.now()-12*6e4}]},
+      s2:{handle:"sunnyside.goldens",dogName:"Waffles",breed:"Golden Retriever",fur:0,pro:"Breeder",posts:[{id:"p2",dogName:"Waffles",breed:"Golden Retriever",fur:0,caption:"Litter update: 3 weeks old and all eyes are open.",loc:"Toowoomba",time:Date.now()-60*6e4}]}
+    },
+    boops:{s1:{p:{"s2_p2":true}}}
+  };
+};
+function startDemo(noConfig){
+  const s=SAMPLE(); S.mode="demo"; S.uid="demo";
+  S.profile=s.profile; S.dogs=s.dogs; S.dogId="d1"; S.logs=s.logs; S.pack=s.pack; S.boops=s.boops;
+  S.pack.demo={handle:"you.and.biscuit",dogName:"Biscuit",breed:"Cavoodle",fur:1,posts:[]};
+  const b=$("#previewBanner"); b.textContent=noConfig?"Setup needed: add your Firebase keys to config.js. Showing sample data; nothing is saved.":"Preview with sample data. Nothing is saved."; b.hidden=false; render();
+}
+function applyName(){
+  document.title=NAME; $$(".nm-l").forEach(e=>e.textContent=NAME.toLowerCase());
+  const m=document.querySelector('meta[name="apple-mobile-web-app-title"]'); if(m) m.setAttribute("content",NAME);
+}
+function stopHome(){ S.homeSubs.forEach(u=>{try{u();}catch(_){}}); S.homeSubs=[]; }
+function stopSubs(){ stopHome(); S.subs.forEach(u=>{try{u();}catch(_){}}); S.subs=[]; }
+function resetData(){ S.hid=null; S.watchHid=undefined; S.dogBase={}; S.homeMembers=[]; S.profile=null; S.dogs=[]; S.dogId=null; S.logs=[]; S.pack={}; S.boops={}; S.screen="today"; S.feed="everyone"; S.hseg="records"; }
+async function init(){
+  buildSwatches(); applyName(); render();
+  const cfg=(window.APP_CONFIG||{}).firebase||{};
+  if(!window.firebase||!cfg.apiKey||/PASTE/i.test(cfg.apiKey)){ startDemo(true); return; }
+  try{ firebase.initializeApp(cfg); }catch(e){ startDemo(true); return; }
+  const db=firebase.firestore();
+  try{ await db.enablePersistence({synchronizeTabs:true}); }catch(_){}
+  S.db=db; S.auth=firebase.auth();
+  S.auth.onAuthStateChanged(u=>{
+    stopSubs(); resetData();
+    if(!u){ S.uid=null; S.email=""; S.mode="auth"; render(); return; }
+    S.uid=u.uid; S.email=u.email||""; S.mode="loading"; render(); subscribe();
+  });
+}
+function subscribe(){
+  const db=S.db; let gotP=false,gotD=false;
+  const fail=e=>{ if(e&&e.code==="permission-denied") toast("Couldn't load your data. Try signing out and back in."); };
+  const prof=db.doc(P.profile());
+  S.subs.push(prof.onSnapshot(s=>{
+    S.profile=s.exists?clone(s.data()):null; gotP=true;
+    const hid=S.profile&&S.profile.hid||null;
+    if(hid!==S.watchHid){ stopHome(); S.watchHid=hid; S.hid=hid; if(hid) watchHome(); else { S.dogs=[]; S.logs=[]; } gotD=!hid; }
+    ready();
+  },fail));
+  function watchHome(){
+    const home=db.doc(P.home());
+    S.homeSubs.push(home.onSnapshot(s=>{ S.homeMembers=s.exists?((s.data().members)||[]):[]; render(); },()=>{}));
+    S.homeSubs.push(home.collection("dogs").onSnapshot(q=>{
+      S.dogs=q.docs.map(d=>Object.assign(clone(d.data()),{id:d.id})).sort((a,b)=>(a.created||0)-(b.created||0));
+      S.dogs.forEach(d=>{ if(!q.metadata.hasPendingWrites) S.dogBase[d.id]=keyMap(strip(d)); else if(!S.dogBase[d.id]) S.dogBase[d.id]=keyMap(strip(d)); });
+      if(!S.dogs.some(d=>d.id===S.dogId)) S.dogId=S.dogs[0]?S.dogs[0].id:null;
+      gotD=true; ready();
+    },fail));
+    S.homeSubs.push(home.collection("logs").orderBy("time","desc").limit(400).onSnapshot(q=>{ S.logs=q.docs.map(d=>Object.assign(clone(d.data()),{id:d.id})); render(); },fail));
+  }
+  S.subs.push(db.collection("pack").onSnapshot(q=>{ const p={}; q.docs.forEach(d=>p[d.id]=clone(d.data())); S.pack=p; render(); },fail));
+  S.subs.push(db.collection("boops").onSnapshot(q=>{ const b={}; q.docs.forEach(d=>b[d.id]=clone(d.data())); S.boops=b; render(); },fail));
+  function ready(){ if(!gotP||!gotD) return; if(S.mode==="loading") S.mode="live"; render(); }
+}
+
+/* ---------- sign in ---------- */
+let authMode="signin";
+function authErr(m){ const p=$("#a_err"); p.textContent=m||""; p.hidden=!m; }
+function setAuthMode(m){ authMode=m; $("#authSubmit").textContent=m==="signup"?"Create account":"Sign in";
+  $("#authToggle").innerHTML=m==="signup"?"Already have an account? <b>Sign in</b>":"New here? <b>Create an account</b>";
+  $("#a_pass").setAttribute("autocomplete",m==="signup"?"new-password":"current-password"); authErr(""); }
+function authBusy(b){ $("#authSubmit").disabled=b; $("#gbtn").disabled=b; }
+function authMsg(e){
+  const c=(e&&e.code)||"";
+  return ({"auth/invalid-email":"That email address doesn't look right.","auth/user-not-found":"No account with that email. Tap Create an account.","auth/wrong-password":"That password isn't right. Try again or reset it.","auth/invalid-credential":"That email or password isn't right. Try again, or reset your password.","auth/invalid-login-credentials":"That email or password isn't right. Try again, or reset your password.","auth/email-already-in-use":"There's already an account with that email. Sign in instead.","auth/weak-password":"Use at least 6 characters for your password.","auth/too-many-requests":"Too many tries. Wait a few minutes and try again.","auth/network-request-failed":"No connection. Check your internet and try again.","auth/popup-closed-by-user":"Google sign-in was closed before it finished.","auth/cancelled-popup-request":"Google sign-in was closed before it finished.","auth/unauthorized-domain":"This web address isn't approved for sign-in yet. Add it in Firebase under Authentication, Settings, Authorized domains.","auth/operation-not-allowed":"This sign-in method isn't switched on yet. Turn it on in Firebase under Authentication, Sign-in method."})[c]||"Sign-in didn't work. Please try again.";
+}
+$("#authForm").addEventListener("submit",async e=>{
+  e.preventDefault(); if(!S.auth) return;
+  const em=$("#a_email").value.trim(), pw=$("#a_pass").value;
+  if(!em||!pw){ authErr("Enter your email and a password."); return; }
+  if(authMode==="signup"&&pw.length<6){ authErr("Use at least 6 characters for your password."); return; }
+  authBusy(true); authErr("");
+  try{ if(authMode==="signup") await S.auth.createUserWithEmailAndPassword(em,pw); else await S.auth.signInWithEmailAndPassword(em,pw); }
+  catch(err){ authErr(authMsg(err)); }
+  authBusy(false);
+});
+async function googleSignIn(){
+  if(!S.auth) return; authBusy(true); authErr("");
+  const prov=new firebase.auth.GoogleAuthProvider();
+  try{ await S.auth.signInWithPopup(prov); }
+  catch(err){ if(err&&err.code==="auth/popup-blocked"){ try{ await S.auth.signInWithRedirect(prov); return; }catch(e2){ authErr(authMsg(e2)); } } else authErr(authMsg(err)); }
+  authBusy(false);
+}
+async function forgot(){
+  if(!S.auth) return; const em=$("#a_email").value.trim();
+  if(!em){ authErr("Type your email above, then tap Forgot password again."); $("#a_email").focus(); return; }
+  try{ await S.auth.sendPasswordResetEmail(em); authErr(""); toast("Check your email for a reset link.",4000); }catch(err){ authErr(authMsg(err)); }
+}
+
+/* ---------- rendering ---------- */
+function onboarded(){ return S.profile&&S.profile.onboarded&&S.dogs.length>0; }
+function render(){
+  let scr=S.screen;
+  if(S.mode==="auth") scr="auth";
+  else if(S.mode==="loading") scr="loading";
+  else if(!onboarded()) scr= scr==="paywall"&&S.dogs.length? "paywall":"welcome";
+  else if(scr==="welcome") scr="today";
+  if(scr!=="loading"&&scr!=="auth") S.screen=scr;
+  $("#auth").hidden=scr!=="auth";
+  $("#welcome").hidden=scr!=="welcome";
+  $("#paywall").hidden=scr!=="paywall";
+  const dyn=!["welcome","paywall","auth"].includes(scr);
+  $("#dyn").hidden=!dyn;
+  if(dyn) $("#dyn").innerHTML=(VIEWS[scr]||VIEWS.today)();
+  const inApp=dyn&&scr!=="loading";
+  $("#tabbar").hidden=!inApp;
+  $("#fab").hidden=!inApp||scr==="account"||scr==="pack"||scr==="nearby";
+  $$("#tabbar button").forEach(b=>{ if(b.dataset.go===scr) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
+  hydrate();
+  if(scr==="paywall"){ const d=dog(); $("#pwTitle").textContent=d?`Try everything free for 14 days with ${d.name}`:"Try everything free for 14 days"; }
+}
+function go(s){ S.screen=s; render(); $("#screens").scrollTop=0; }
+
+function dogAvatar(d,size,cls){
+  const f=furOf(d&&d.fur);
+  const inner=d&&d.photoId? `<img ${imgAttr(d.photoId)} alt="">` : `<svg width="${Math.round(size*.82)}" height="${Math.round(size*.82)}" viewBox="0 0 120 120" aria-hidden="true"><use href="#${sp(d)}"/></svg>`;
+  return `<span class="av ${cls||""}" style="width:${size}px;height:${size}px;background:${f.bg};color:${f.fur}">${inner}</span>`;
+}
+function topbar(title){
+  const d=dog();
+  return `<div class="topbar"><h1>${esc(title)}</h1><button class="dogswitch" data-action="switchDog" aria-label="Switch pet or open account">${dogAvatar(d,34)}<span>${esc(d?d.name:"")}</span> ▾</button></div>`;
+}
+function trialInfo(){
+  const p=S.profile||{};
+  if(p.plan==="subscribed") return {label:"Subscribed",left:null};
+  if(p.plan==="cancelled") return {label:"Trial cancelled",left:0};
+  const start=p.trialStart||Date.now(); const left=Math.max(0,14-Math.floor((Date.now()-start)/DAY));
+  return {label:"Free trial",left};
+}
+function statusPill(n){
+  if(n==null) return "";
+  if(n<0) return `<span class="pill alert">${-n}d overdue</span>`;
+  if(n===0) return `<span class="pill due">Today</span>`;
+  if(n===1) return `<span class="pill soon">Tomorrow</span>`;
+  if(n<=30) return `<span class="pill soon">${n} days</span>`;
+  return `<span class="pill ok">${esc(fmtDM(addDays(todayKey(),n)))}</span>`;
+}
+const check='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>';
+function logLine(l){
+  const bits={play:()=>["Play time",[l.minutes?l.minutes+" min":"",l.note].filter(Boolean).join(" · ")],treat:()=>["Treat",[(l.note||"")+(qtyOf(l)>1?" ×"+qtyOf(l):""),l.by?(l.byUid===S.uid?"you":"@"+l.by):""].filter(Boolean).join(" · ")],walk:()=>["Walk",[l.km?l.km+" km":"",l.minutes?l.minutes+" min":"",l.note].filter(Boolean).join(" · ")],
+    meal:()=>["Meal",l.note],meds:()=>["Meds",l.note],weight:()=>["Weight",l.kg+" kg"],photo:()=>["Photo added",l.note],
+    note:()=>["Note",l.note],reminder:()=>["Done",l.note]};
+  const [t,s]=(bits[l.type]||bits.note)();
+  return `<div class="row"><div class="who" style="color:var(--accent)">${ico(l.type,16)}</div><div class="grow"><div class="t">${esc(t)}</div>${s?`<div class="s">${esc(s)}</div>`:""}</div><span class="time">${esc(ago(l.time))}</span></div>`;
+}
+
+const VIEWS={
+loading:()=>`<div class="loading">Fetching your pack…</div>`,
+
+today(){
+  const d=dog(); if(!d) return "";
+  const t=todayKey(), done=(d.done&&d.done[t])||[];
+  const routine=(d.routine||[]).slice().sort((a,b)=>(a.time||"").localeCompare(b.time||""));
+  const dueRem=(d.reminders||[]).filter(r=>{const n=daysUntil(r.due); return n!=null&&n<=0;});
+  const total=routine.length+dueRem.length, n=routine.filter(r=>done.includes(r.id)).length;
+  const tr=trialInfo();
+  const hour=new Date().getHours(), greet=hour<12?"Morning":hour<17?"Afternoon":"Evening";
+  const playMin=S.logs.filter(l=>l.dogId===d.id&&l.type==="play"&&Date.now()-l.time<7*DAY).reduce((a,l)=>a+(+l.minutes||0),0);
+  const week=S.logs.filter(l=>l.dogId===d.id&&l.type==="walk"&&Date.now()-l.time<7*DAY).reduce((a,l)=>a+(+l.km||0),0);
+  const upcoming=(d.reminders||[]).map(r=>({r,n:daysUntil(r.due)})).filter(x=>x.n!=null&&x.n>0).sort((a,b)=>a.n-b.n)[0];
+  const vetN=d.vet&&daysUntil(d.vet.nextAppt);
+  const recent=S.logs.filter(l=>l.dogId===d.id).slice(0,5);
+  const banner= tr.label==="Subscribed"? "" :
+    `<button class="trial" data-go="account"><span><b>${tr.label==="Trial cancelled"?"Your trial is cancelled":`${tr.left} day${tr.left===1?"":"s"} left in your free trial`}</b><small>Then $5/month. Keep every record and photo.</small></span><span class="go">See plan</span></button>`;
+  return `${topbar("Today")}${banner}
+  <div class="hello"><h2>${greet}! ${esc(d.name)}'s day so far</h2><p>${esc(new Date().toLocaleDateString("en-AU",{weekday:"long",day:"numeric",month:"long"}))}</p>
+  <button class="sos-mini" data-action="sos" style="align-self:flex-start;margin-block:6px 0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Emergency vet</button></div>
+  ${total?`<div class="progress"><div class="bar"><i style="width:${total?Math.round(n/total*100):0}%"></i></div><span>${n} of ${total}</span></div>`:""}
+  <div class="card list">
+    ${routine.map(r=>{const on=done.includes(r.id);return `<div class="row${on?" done":""}"><button class="check" data-action="tick" data-id="${esc(r.id)}" aria-pressed="${on}" aria-label="${on?"Untick":"Tick off"} ${esc(r.task)}">${check}</button><div class="grow"><div class="t">${esc(r.task)}</div>${r.who?`<div class="s">${esc(r.who)}</div>`:""}</div><span class="time">${esc(fmtTime(r.time))}</span></div>`;}).join("")}
+    ${dueRem.map(r=>`<div class="row"><button class="check" data-action="remDone" data-id="${esc(r.id)}" aria-label="Mark ${esc(r.title)} done">${check}</button><div class="grow"><div class="t">${esc(r.title)}</div><div class="s">Reminder${r.every?` · every ${r.every} days`:""}</div></div>${statusPill(daysUntil(r.due))}</div>`).join("")}
+    ${total?"":`<div class="empty"><b>Nothing scheduled yet</b>Add walks and meals in Routine, or reminders in Health.<button class="btn ghost" data-go="routine" style="padding:10px">Set up routine</button></div>`}
+  </div>
+  ${treatCard(d)}
+  <div class="duo">
+    ${sp(d)==="cat"?`<div class="mini butter"><span class="k">Play this week</span><span class="v">${playMin} <small>min</small></span></div>`:`<div class="mini butter"><span class="k">Walked this week</span><span class="v">${(Math.round(week*10)/10)} <small>km</small></span></div>`}
+    ${vetN!=null&&vetN>=0?`<div class="mini sky"><span class="k">Next vet visit</span><span class="v">${vetN===0?"Today":vetN===1?"Tmrw":esc(fmtDM(d.vet.nextAppt))}</span></div>`
+      : upcoming?`<div class="mini sky"><span class="k">Next: ${esc(upcoming.r.title)}</span><span class="v">${upcoming.n} <small>day${upcoming.n===1?"":"s"}</small></span></div>`
+      : `<button class="mini sky" data-go="health" style="text-align:left"><span class="k">Next reminder</span><span class="v" style="font-size:17px">Add one</span></button>`}
+  </div>
+  <div class="section-h"><h3>Recent activity</h3><button data-action="logMenu">Log something</button></div>
+  <div class="card list">${recent.length?recent.map(logLine).join(""):`<div class="empty"><b>No logs yet</b>Tap the pink + to log a treat, meal, meds or weight.</div>`}</div>`;
+},
+
+pack(){
+  const me=S.uid, following=(S.profile&&S.profile.following)||[];
+  const members=Object.entries(S.pack).filter(([id,p])=>p&&p.dogName);
+  const show=S.feed==="friends"? members.filter(([id])=>id===me||following.includes(id)) : members;
+  const posts=[]; show.forEach(([id,p])=>(p.posts||[]).forEach(po=>posts.push({author:id,p,po})));
+  posts.sort((a,b)=>b.po.time-a.po.time);
+  const myB=(S.boops[me]&&S.boops[me].p)||{};
+  const count=k=>Object.values(S.boops).filter(b=>b&&b.p&&b.p[k]).length;
+  const others=members.filter(([id])=>id!==me);
+  const stories=members.sort(([a],[b])=>(a===me?-1:b===me?1:0)).slice(0,12);
+  return `<div class="topbar"><h1>The Pack</h1><button class="follow" data-action="friends">+ Add friends</button></div>
+  <div class="stories">
+    <button class="story" data-action="compose"><span class="ring add"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>Post</button>
+    ${stories.filter(([id])=>id!==me).map(([id,p])=>`<button class="story" data-action="friends"><span class="ring${following.includes(id)?"":" seen"}"><span class="face" style="background:${furOf(p.fur).bg};color:${furOf(p.fur).fur}">${p.photoId?`<img ${imgAttr(p.photoId)} alt="">`:`<svg width="46" height="46" viewBox="0 0 120 120"><use href="#${sp(p)}"/></svg>`}</span></span>${esc(p.dogName)}</button>`).join("")}
+  </div>
+  <div class="segment" role="group" aria-label="Whose posts"><button aria-pressed="${S.feed==="everyone"}" data-feed="everyone">Everyone testing</button><button aria-pressed="${S.feed==="friends"}" data-feed="friends">My friends</button></div>
+  <div class="dogsonly"><svg width="22" height="22" viewBox="0 0 24 24" fill="var(--accent)" style="flex:none"><use href="#paw"/></svg><span><b>Pets only, always.</b> Every photo needs a cat or dog in it. No selfies, no ads, just snoots and whiskers.</span></div>
+  ${posts.length? posts.slice(0,60).map(({author,p,po})=>{
+    const k=author+"_"+po.id, on=!!myB[k], f=furOf(po.fur);
+    return `<article class="post">
+      <div class="post-h">${dogAvatar({fur:po.fur,photoId:po.dogPhoto,species:po.species},38)}<div class="grow"><b>${esc(po.dogName||p.dogName)}</b>${p.pro?`<span class="tag">${esc(p.pro)}</span>`:""}<div class="s">${esc(po.breed||p.breed||"")}${p.handle?" · @"+esc(p.handle):""}</div></div><span class="time">${esc(ago(po.time))}</span>${author===me?`<button class="xbtn" data-action="delPost" data-id="${esc(po.id)}" aria-label="Delete post">${X}</button>`:""}</div>
+      <div class="post-img" style="background:linear-gradient(160deg,${f.bg},var(--accent-soft));color:${f.fur}" data-dbl="${esc(k)}">${po.photoId?`<img ${imgAttr(po.photoId)} alt="${esc(po.caption||"Pet photo")}" loading="lazy">`:`<svg class="dog" viewBox="0 0 120 120"><use href="#${sp(po)}"/></svg>`}${po.loc?`<span class="loc">${esc(po.loc)}</span>`:""}<svg class="pop" data-pop="${esc(k)}" width="96" height="96" viewBox="0 0 24 24" fill="#fff"><use href="#heartpaw"/></svg></div>
+      <div class="post-a"><button data-action="boop" data-k="${esc(k)}" aria-pressed="${on}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><use href="#heartpaw"/></svg>${count(k)} boop${count(k)===1?"":"s"}</button></div>
+      ${po.caption?`<div class="post-c">${p.handle?`<b>@${esc(p.handle)}</b> `:""}${esc(po.caption)}</div>`:`<div style="height:8px"></div>`}
+    </article>`;}).join("")
+  : `<div class="card"><div class="empty"><b>${S.feed==="friends"?"No posts from your friends yet":"The Pack is quiet"}</b>${S.feed==="friends"?(others.length?"Add friends to see their pupdates here.":`Invite other pawrents to join ${NAME}, then add them.`):"Be the first to share a pupdate."}<button class="btn primary" data-action="compose" style="padding:12px">Post a photo</button></div></div>`}`;
+},
+
+health(){
+  const d=dog(); if(!d) return "";
+  const seg=`<div class="segment" role="group" aria-label="Health sections"><button aria-pressed="${S.hseg==="records"}" data-hseg="records">Records</button><button aria-pressed="${S.hseg==="vet"}" data-hseg="vet">Vet &amp; insurance</button></div>`;
+  const sos=`<button class="sos" data-action="sos"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span><span><b>Emergency? Find help now</b><small>${d.emergency&&d.emergency.name?esc(d.emergency.name):"Nearest 24/7 animal hospitals"}</small></span></button>`;
+  if(S.hseg==="vet") return `${topbar("Health")}${sos}${seg}${vetPanel(d)}`;
+  const w=(d.weights||[]).slice().sort((a,b)=>a.date.localeCompare(b.date));
+  const last=w[w.length-1];
+  const rem=(d.reminders||[]).map(r=>({r,n:daysUntil(r.due)})).sort((a,b)=>(a.n??999)-(b.n??999));
+  const vac=(d.vaccines||[]);
+  const have=new Set(rem.map(x=>x.r.title.toLowerCase()));
+  const quick=(sp(d)==="cat"?[["Flea treatment",30],["Worming tablet",90],["Annual vaccination (F3)",365],["Annual vet check-up",365]]:[["Flea & tick treatment",30],["Worming tablet",90],["Heartworm prevention",30],["Annual vet check-up",365]]).filter(([t])=>!have.has(t.toLowerCase()));
+  return `${topbar("Health")}${sos}${seg}
+  <div class="card chart">
+    <div class="section-h"><h3>Weight</h3><button data-action="addWeight">+ Add</button></div>
+    ${last?`<p style="color:var(--muted);font-size:13px;margin-top:2px"><b style="color:var(--ink);font-size:22px;font-family:var(--display)">${esc(last.kg)} kg</b> · ${esc(fmtD(last.date))}${w.length>1?` · ${(last.kg-w[0].kg)>=0?"up":"down"} ${Math.abs(Math.round((last.kg-w[0].kg)*10)/10)} kg since ${esc(fmtDM(w[0].date))}`:""}</p>${w.length>1?weightChart(w.slice(-8)):""}`
+    :`<div class="empty" style="padding:12px">Log a weight to start the chart.</div>`}
+  </div>
+  <div class="section-h"><h3>Reminders</h3><button data-action="addReminder">+ Add</button></div>
+  <div class="card list">${rem.length?rem.map(({r,n})=>`<div class="row"><div class="grow"><div class="t">${esc(r.title)}</div><div class="s">${esc(fmtD(r.due))}${r.every?` · every ${r.every} days`:" · one-off"}</div></div>${statusPill(n)}<button class="xbtn" data-action="delReminder" data-id="${esc(r.id)}" aria-label="Remove reminder">${X}</button></div>`).join(""):`<div class="empty" style="padding:12px">No reminders yet.</div>`}</div>
+  ${quick.length?`<div class="chips">${quick.map(([t,e])=>`<button data-action="quickRem" data-t="${esc(t)}" data-e="${e}">+ ${esc(t)}</button>`).join("")}</div>`:""}
+  <div class="section-h"><h3>Vaccinations</h3><button data-action="addVaccine">+ Add</button></div>
+  <div class="card list">${vac.length?vac.map(v=>{const n=daysUntil(v.due);return `<div class="row"><div class="grow"><div class="t">${esc(v.name)}</div><div class="s">Given ${esc(fmtD(v.given))||"—"}${v.due?` · next due ${esc(fmtD(v.due))}`:""}</div></div>${n==null?"":n<0?`<span class="pill alert">Overdue</span>`:n<=30?`<span class="pill soon">Due soon</span>`:`<span class="pill ok">Valid</span>`}<button class="xbtn" data-action="delVaccine" data-id="${esc(v.id)}" aria-label="Remove vaccination">${X}</button></div>`;}).join(""):`<div class="empty" style="padding:12px">Add vaccinations from your vet certificate.</div>`}</div>
+  <div class="section-h"><h3>Notes for the vet</h3><button data-action="editNotes">Edit</button></div>
+  <div class="card"><p style="white-space:pre-wrap">${d.notes?esc(d.notes):`<span style="color:var(--muted)">Symptoms, questions or anything odd you've noticed.</span>`}</p></div>`;
+},
+
+routine(){
+  const d=dog(); if(!d) return "";
+  const r=(d.routine||[]).slice().sort((a,b)=>(a.time||"").localeCompare(b.time||""));
+  const team=d.team||[];
+  return `${topbar("Routine")}
+  <p style="color:var(--muted)">Your daily schedule. Each item shows up on Today to tick off.</p>
+  <div class="card list">${r.length?r.map(x=>`<div class="row"><span class="time" style="width:58px">${esc(fmtTime(x.time))}</span><div class="grow"><div class="t">${esc(x.task)}</div>${x.who?`<div class="s">${esc(x.who)}</div>`:""}</div><div class="who">${esc((x.who||"?").slice(0,1).toUpperCase())}</div><button class="xbtn" data-action="delRoutine" data-id="${esc(x.id)}" aria-label="Remove ${esc(x.task)}">${X}</button></div>`).join(""):`<div class="empty">No routine yet.</div>`}</div>
+  <button class="btn ghost" data-action="addRoutine">+ Add to routine</button>
+  ${householdCard(d)}
+  <div class="section-h"><h3>Care team</h3><button data-action="addTeam">+ Add person</button></div>
+  <div class="card list">${team.length?team.map(p=>`<div class="row"><div class="who">${esc((p.name||"?").slice(0,1).toUpperCase())}</div><div class="grow"><div class="t">${esc(p.name)}</div><div class="s">${esc(p.role||"")}${p.phone?" · "+esc(p.phone):""}</div></div><button class="xbtn" data-action="delTeam" data-id="${esc(p.id)}" aria-label="Remove ${esc(p.name)}">${X}</button></div>`).join(""):`<div class="empty" style="padding:12px">Add your partner, walker or sitter so their names show on the routine.</div>`}</div>`;
+},
+
+memories(){
+  const d=dog(); if(!d) return "";
+  const next=[["birthday","birthday",d.birthday],["gotcha day","gotcha day",d.gotchaDay]].map(([k,l,s])=>{const b=parseD(s); if(!b) return null; const t=midnight(); let n=new Date(t.getFullYear(),b.getMonth(),b.getDate()); if(n<t) n=new Date(t.getFullYear()+1,b.getMonth(),b.getDate()); const yrs=n.getFullYear()-b.getFullYear(); return {l,days:Math.round((n-t)/DAY),yrs,date:dkey(n)};}).filter(Boolean).sort((a,b)=>a.days-b.days)[0];
+  const ord=n=>n+(["th","st","nd","rd"][(n%100-20)%10]||["th","st","nd","rd"][n%100]||"th");
+  const photos=(d.photos||[]).slice().sort((a,b)=>(b.time||0)-(a.time||0));
+  const ms=(d.milestones||[]).slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+  return `${topbar("Memories")}
+  ${next?`<div class="card milestone"><div class="countdown"><b>${next.days}</b><small>${next.days===1?"day":"days"}</small></div><div class="grow"><div class="eyebrow">${next.days===0?"Today!":"Coming up"}</div><b style="font-family:var(--display);font-weight:600;font-size:18px">${esc(d.name)}'s ${next.yrs>0?ord(next.yrs)+" ":""}${esc(next.l)}</b><div style="color:var(--muted);font-size:13px">${esc(fmtD(next.date))}</div></div></div>`
+  :`<button class="card milestone" data-action="editDog" style="text-align:left"><div class="countdown"><b>?</b><small>days</small></div><div class="grow"><b>Add ${esc(d.name)}'s birthday</b><div style="color:var(--muted);font-size:13px">We'll count down to birthdays and gotcha days.</div></div></button>`}
+  <div class="section-h"><h3>Photos</h3><button data-action="addPhoto">+ Add photo</button></div>
+  ${photos.length?`<div class="grid">${photos.map(p=>`<button class="ph" data-action="openPhoto" data-id="${esc(p.id)}" style="background:${furOf(d.fur).bg}"><img ${imgAttr(p.assetId)} alt="${esc(p.caption||"Photo")}" loading="lazy">${p.caption?`<span>${esc(p.caption.slice(0,18))}</span>`:""}</button>`).join("")}</div>`
+  :`<div class="card"><div class="empty"><b>No photos yet</b>Add your favourite ${esc(d.name)} moments.<button class="btn primary" data-action="addPhoto" style="padding:12px">Add a photo</button></div></div>`}
+  <div class="section-h"><h3>Milestones</h3><button data-action="addMilestone">+ Add</button></div>
+  <div class="card list">${ms.length?ms.map(m=>`<div class="row"><div class="grow"><div class="t">${esc(m.title)}</div><div class="s">${esc(fmtD(m.date))}</div></div><button class="xbtn" data-action="delMilestone" data-id="${esc(m.id)}" aria-label="Remove milestone">${X}</button></div>`).join(""):`<div class="empty" style="padding:12px">First swim, first trick, first birthday…</div>`}</div>`;
+},
+
+nearby(){
+  const cats=[["24/7 emergency vets","24 hour emergency vet","Open now, nearest first","var(--alert-soft)","var(--alert)"],["Vets","vet clinic","Clinics near you","var(--alert-soft)","var(--alert)"],["Off-leash dog parks","off leash dog park","Run, sniff, zoomies","var(--good-soft)","var(--good)"],["Dog-friendly cafés","dog friendly cafe","Puppuccinos welcome","var(--butter-soft)","#C99400"],["Groomers","pet groomer","Baths, cuts and nails","var(--lilac-soft)","var(--lilac)"],["Pet sitters & walkers","pet sitter","For busy days and holidays","var(--sky-soft)","var(--sky)"],["Catteries & boarding","cattery boarding","When you travel","var(--lilac-soft)","var(--lilac)"],["Pet shops","pet store","Food, toys, treats","var(--accent-soft)","var(--accent)"],["Dog beaches","dog friendly beach","Splash time","var(--sky-soft)","var(--sky)"]];
+  return `<div class="topbar"><h1>Nearby</h1></div>
+  <p style="color:var(--muted)">Opens Google Maps using your phone's location, nearest first.</p>
+  <div class="card">${cats.map(([t,q,s,bg,fg])=>`<a class="linkrow" href="${MAPS(q+" near me")}" target="_blank" rel="noopener"><span class="av" style="width:44px;height:44px;background:${bg};color:${fg}"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><use href="#paw"/></svg></span><span class="grow"><span class="t" style="display:block">${esc(t)}</span><span class="s">${esc(s)}</span></span><span class="go">Open ↗</span></a>`).join("")}</div>`;
+},
+
+account(){
+  const p=S.profile||{}, tr=trialInfo();
+  return `<div class="topbar"><h1>Account</h1><button class="follow" data-go="today">Done</button></div>
+  <div class="section-h"><h3>My pets</h3><button data-action="addDog">+ Add a pet</button></div>
+  <div class="card list">${S.dogs.map(d=>`<div class="row">${dogAvatar(d,42)}<div class="grow"><div class="t">${esc(d.name)}${d.id===(dog()||{}).id?` <span class="pill ok">Showing</span>`:""}</div><div class="s">${esc([d.breed,d.birthday?ageOf(d.birthday):"",d.microchip?"chip "+d.microchip:""].filter(Boolean).join(" · "))}</div></div>${d.id!==(dog()||{}).id?`<button class="follow" data-action="pickDog" data-id="${esc(d.id)}">Show</button>`:`<button class="follow" data-action="editDog" aria-pressed="true">Edit</button>`}</div>`).join("")}</div>
+  <div class="plan" style="border-color:var(--line)">
+    <div class="section-h"><h3>Your plan</h3><span class="pill soon">${esc(tr.label)}</span></div>
+    <p style="color:var(--muted)">${tr.label==="Subscribed"?`$5 a month. Thanks for backing ${NAME}!`:tr.label==="Trial cancelled"?"Your trial is cancelled. Your records stay here.":`${tr.left} day${tr.left===1?"":"s"} left. Then $5/month. Cancel before then and you won't be charged.`}</p>
+    ${tr.label==="Subscribed"?`<button class="btn ghost" data-action="plan" data-plan="cancelled">Cancel subscription</button>`:`<button class="btn primary" data-action="plan" data-plan="subscribed">Subscribe, $5/month</button>${tr.label==="Free trial"?`<button class="btn ghost" data-action="plan" data-plan="cancelled">Cancel trial</button>`:""}`}
+    <p class="fine">Beta: free for now. No payment is taken.</p>
+  </div>
+  ${S.mode==="live"?`<div class="card list"><div class="row"><div class="grow"><div class="t">Signed in</div><div class="s">${esc(S.email||"")}</div></div><button class="follow" data-action="signout" aria-pressed="true">Sign out</button></div></div>`:""}
+  <button class="btn ghost" data-go="routine">Share your pets with your partner</button>
+  <div class="card list"><div class="row"><div class="grow"><div class="t">Your Pack handle</div><div class="s">@${esc(p.handle||"not set")} · ${((p.following)||[]).length} friends</div></div><button class="follow" data-action="editHandle">Edit</button></div></div>
+  <p class="legal"><a href="privacy.html">Privacy policy</a></p>
+  ${S.mode==="demo"?`<p class="fine">This is a preview with sample data. Nothing is saved.</p>`:`<p class="fine">Your pets' records are private to your household. Pack posts are visible to everyone using ${NAME}.</p>`}`;
+}
+};
+
+function treatsOn(d,day){ return S.logs.filter(l=>l.dogId===d.id&&l.type==="treat"&&dkey(new Date(l.time))===day); }
+const qtyOf=l=>Math.max(1,(l.qty|0)||1);
+function treatLimit(d){ return d.treatLimit==null?3:(d.treatLimit|0); }
+function treatCard(d){
+  const list=treatsOn(d,todayKey()), n=list.reduce((a,l)=>a+qtyOf(l),0), lim=treatLimit(d);
+  const shown=Math.max(lim,n), over=lim>0&&n>lim, full=lim>0&&n===lim;
+  const bones=lim>0? Array.from({length:Math.min(shown,12)},(_,i)=>`<span class="bone${i<n?(i>=lim?" over":" on"):""}" aria-hidden="true">${ico("treat",15)}</span>`).join("") : "";
+  const status= lim===0? `${n} today` : over? `Over the limit by ${n-lim}` : full? "That's the limit for today" : `${lim-n} left today`;
+  let week=0; for(let i=0;i<7;i++) week+=treatsOn(d,addDays(todayKey(),-i)).reduce((a,l)=>a+qtyOf(l),0);
+  return `<div class="card treats">
+    <div class="section-h"><h3>Treats today</h3><button data-action="treatLimit">${lim>0?`Limit: ${lim} a day`:"Set a limit"}</button></div>
+    ${bones?`<div class="bones" role="img" aria-label="${n} of ${lim} treats given">${bones}</div>`:""}
+    <div class="treat-status${over?" over":full?" full":""}">${n}${lim>0?` of ${lim}`:""} · ${esc(status)}</div>
+    ${list.length?`<div class="list">${list.map(l=>`<div class="row"><div class="grow"><div class="t">${esc(l.note||"Treat")}${qtyOf(l)>1?` ×${qtyOf(l)}`:""}</div><div class="s">${esc(l.by?(l.byUid===S.uid?"You":"@"+l.by):"")} · ${esc(new Date(l.time).toLocaleTimeString("en-AU",{hour:"numeric",minute:"2-digit"}))}</div></div><button class="xbtn" data-action="delTreat" data-id="${esc(l.id)}" aria-label="Remove this treat">${X}</button></div>`).join("")}</div>`:`<p class="stat-note">No treats yet today. Whoever gives one, log it here so everyone knows.</p>`}
+    <button class="btn primary" data-action="treat" style="padding:12px">${ico("treat",18)} Give a treat</button>
+    <p class="stat-note">Last 7 days: ${week} treat${week===1?"":"s"}${week?` · about ${Math.round(week/7*10)/10} a day`:""}</p>
+  </div>`;
+}
+function treatSheet(sel,qty,confirmOver){
+  const d=dog(), lim=treatLimit(d), n=treatsOn(d,todayKey()).reduce((a,l)=>a+qtyOf(l),0);
+  const recent=[]; S.logs.forEach(l=>{ if(l.dogId===d.id&&l.type==="treat"&&l.note&&!recent.includes(l.note)&&recent.length<6) recent.push(l.note); });
+  (sp(d)==="cat"?["Lickable treat","Freeze-dried chicken","Dental treat","Tuna flake"]:["Dental stick","Liver treat","Chicken jerky","Carrot"]).forEach(t=>{ if(recent.length<6&&!recent.includes(t)) recent.push(t); });
+  qty=Math.max(1,Math.min(10,qty||1)); sel=sel==null?"":sel;
+  const willOver=lim>0&&n+qty>lim;
+  openSheet(`<h3 style="font-size:20px">Treat for ${esc(d.name)}</h3>
+    <p class="stat-note">${n} given today${lim>0?` · limit ${lim}`:""}</p>
+    <div class="chips" role="group" aria-label="Pick a treat">${recent.map(t=>`<button data-action="treatPick" data-t="${esc(t)}" aria-pressed="${t===sel}">${esc(t)}</button>`).join("")}</div>
+    <div class="field"><label for="t_name">What treat</label><input id="t_name" value="${esc(sel)}" placeholder="e.g. Dental stick" autocomplete="off"></div>
+    <div class="field"><label>How many</label><div class="stepper"><button type="button" data-action="treatQty" data-d="-1" aria-label="One fewer">−</button><output id="t_qty">${qty}</output><button type="button" data-action="treatQty" data-d="1" aria-label="One more">+</button></div></div>
+    ${willOver?`<div class="warn"><b>${lim-n<=0?`${esc(d.name)} has already had ${n} today.`:`That takes ${esc(d.name)} to ${n+qty}.`}</b> The daily limit is ${lim}.</div>`:""}
+    <button class="btn primary" data-action="treatSave" data-over="${willOver}">${willOver?"Log it anyway":"Log treat"}</button>
+    <button class="btn ghost" data-close>Cancel</button>`);
+}
+function householdCard(d){
+  const n=S.mode==="demo"?2:Math.max(1,S.homeMembers.length);
+  return `<div class="card" style="display:flex;flex-direction:column;gap:10px">
+    <div class="section-h"><h3>Share your pets with your partner</h3><span class="pill ok">${n} ${n===1?"person":"people"}</span></div>
+    <p class="stat-note">Everyone you share with sees the same pets: treats, walks, ticks and reminders, live.</p>
+    ${S.mode==="demo"?`<p class="stat-note">Invite codes work on the live app.</p>`:`<div class="copyline"><span><span class="stat-note" style="display:block">Invite code</span><span class="code">${esc(S.hid||"")}</span></span><button data-action="copy" data-text="${esc(S.hid||"")}" data-label="Code copied">Copy</button></div>
+    <p class="stat-note">Your partner signs up at ${esc(location.host||"the app")}, taps <b>Join with their code</b>, and pastes this in.</p>`}
+  </div>`;
+}
+function ageOf(b){ const d=parseD(b); if(!d) return ""; const m=(new Date().getFullYear()-d.getFullYear())*12+(new Date().getMonth()-d.getMonth()); return m<12? m+" mo" : Math.floor(m/12)+" yrs"; }
+
+function vetPanel(d){
+  const ins=d.insurance||{}, v=d.vet||{}, em=d.emergency||{};
+  const lim=num(ins.limit), used=num(ins.used)||0;
+  const kv=(k,val)=>val?`<div><div class="k">${k}</div><div class="v">${esc(val)}</div></div>`:"";
+  const copy=ph=>ph?`<div class="copyline"><span class="num">${esc(ph)}</span><button data-action="copy" data-text="${esc(ph)}">Copy</button></div>`:"";
+  return `
+  <div class="section-h"><h3>Pet insurance</h3><button data-action="editIns">${ins.insurer?"Edit":"+ Add"}</button></div>
+  ${ins.insurer?`<div class="ins">
+    <div class="ins-top"><div><div class="eyebrow">Insurer</div><b>${esc(ins.insurer)}</b></div>${ins.renews&&daysUntil(ins.renews)<0?`<span class="pill alert">Expired</span>`:`<span class="pill open">Active</span>`}</div>
+    <div class="kv">${kv("Policy number",ins.policy)}${kv("Renews",fmtD(ins.renews))}${kv("Covers",ins.cover?ins.cover+"% of vet bills":"")}${kv("Excess",ins.excess?money(num(ins.excess)):"")}${kv("Premium",ins.premium?money(num(ins.premium))+" / month":"")}${kv("Claims phone",ins.claims)}</div>
+    ${lim?`<div class="limit"><div class="section-h"><span style="font-size:12px;font-weight:700;color:var(--muted)">Annual limit remaining</span><span style="font-weight:800;font-variant-numeric:tabular-nums">${money(Math.max(0,lim-used))} of ${money(lim)}</span></div><div class="bar"><i style="width:${Math.max(0,Math.min(100,(lim-used)/lim*100))}%"></i></div></div>`:""}
+    ${ins.claims?copy(ins.claims):""}
+  </div>`:`<div class="card"><div class="empty" style="padding:12px">Keep your policy number and claims line handy for vet visits.</div></div>`}
+  <div class="section-h"><h3>My vet</h3><button data-action="editVet">${v.clinic?"Edit":"+ Add"}</button></div>
+  ${v.clinic?`<div class="card" style="display:flex;flex-direction:column;gap:10px">
+    <div><b style="font-family:var(--display);font-weight:600;font-size:18px">${esc(v.clinic)}</b>${v.vetName?`<div style="color:var(--muted);font-size:13px">${esc(v.vetName)}</div>`:""}</div>
+    <div class="kv">${kv("Hours",v.hours)}${kv("Next appointment",v.nextAppt?fmtD(v.nextAppt)+(v.apptTime?", "+fmtTime(v.apptTime):""):"")}${v.address?`<div style="grid-column:1/-1"><div class="k">Address</div><div class="v" style="font-weight:600">${esc(v.address)}</div></div>`:""}</div>
+    ${copy(v.phone)}
+    ${v.address?`<a class="btn ghost" style="padding:11px;text-decoration:none" href="${MAPS(v.address)}" target="_blank" rel="noopener">Directions ↗</a>`:""}
+  </div>`:`<div class="card"><div class="empty" style="padding:12px">Add your regular vet's phone, address and next appointment.</div></div>`}
+  <div class="section-h"><h3>Emergency hospital</h3><button data-action="editEm">${em.name?"Edit":"+ Add"}</button></div>
+  <div class="card list">
+    ${em.name?`<div class="row hosp"><span class="ic">24/7</span><div class="grow"><div class="t">${esc(em.name)}</div><div class="s">${esc([em.phone,em.address].filter(Boolean).join(" · "))}</div></div></div>`:""}
+    <a class="linkrow" href="${MAPS("24 hour emergency vet near me")}" target="_blank" rel="noopener"><span class="av" style="width:42px;height:42px;background:var(--alert-soft);color:var(--alert)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="grow"><span class="t" style="display:block">Find 24/7 animal hospitals near me</span><span class="s">Opens Google Maps with your location</span></span><span class="go">Open ↗</span></a>
+  </div>
+  <p class="fine">Save your nearest emergency hospital now, so it's one tap away when you need it.</p>`;
+}
+
+function weightChart(w){
+  const vals=w.map(x=>+x.kg), lo=Math.floor(Math.min(...vals)*2)/2-.5, hi=Math.ceil(Math.max(...vals)*2)/2+.5;
+  const X=i=>30+i*(274/(w.length-1)), Y=v=>12+(hi-v)/(hi-lo)*80;
+  const pts=w.map((x,i)=>`${X(i).toFixed(1)},${Y(+x.kg).toFixed(1)}`).join(" ");
+  let g=""; [lo,(lo+hi)/2,hi].forEach(v=>{g+=`<line x1="30" x2="304" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="3 4"/><text class="lbl" x="0" y="${Y(v)+3}">${v.toFixed(1)}</text>`;});
+  w.forEach((x,i)=>{ if(w.length<=6||i%2===0||i===w.length-1) g+=`<text class="lbl" x="${X(i)}" y="114" text-anchor="middle">${esc(fmtDM(x.date))}</text>`; });
+  const L=w.length-1;
+  return `<svg viewBox="0 0 320 120" role="img" aria-label="Weight over time">${g}<polygon points="30,92 ${pts} ${X(L)},92" fill="var(--lilac)" opacity=".3"/><polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${X(L)}" cy="${Y(+w[L].kg)}" r="5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/></svg>`;
+}
+
+/* ---------- sheets & forms ---------- */
+function openSheet(html){ $("#sheet").innerHTML=`<div class="grab"></div>${html}`; $("#scrim").hidden=false; hydrate(); const f=$("#sheet input,#sheet textarea"); if(f&&!f.value) setTimeout(()=>{try{f.focus();}catch(_){}} ,50); }
+function closeSheet(){ $("#scrim").hidden=true; $("#sheet").innerHTML=""; S.composer=null; formSave=null; }
+let formSave=null;
+function openForm(title,fields,onSave,submit){
+  formSave={fields,onSave};
+  openSheet(`<h3 style="font-size:20px">${esc(title)}</h3><form class="form" id="sheetForm" novalidate>${fields.map(f=>{
+    const id="f_"+f.k, val=f.value==null?"":f.value;
+    let input;
+    if(f.type==="textarea") input=`<textarea id="${id}" placeholder="${esc(f.ph||"")}">${esc(val)}</textarea>`;
+    else if(f.type==="select") input=`<select id="${id}">${f.options.map(([v,l])=>`<option value="${esc(v)}"${String(v)===String(val)?" selected":""}>${esc(l)}</option>`).join("")}</select>`;
+    else input=`<input id="${id}" type="${f.type||"text"}" value="${esc(val)}" placeholder="${esc(f.ph||"")}"${f.type==="number"?' inputmode="decimal" step="any"':""} autocomplete="off">`;
+    return `<div class="field"${f.half?' data-half':''}><label for="${id}">${esc(f.label)}</label>${input}</div>`;
+  }).join("")}<p class="stat-note" id="formErr" hidden style="color:var(--alert)"></p><button class="btn primary" type="submit">${esc(submit||"Save")}</button><button class="btn ghost" type="button" data-close>Cancel</button></form>`);
+}
+function readForm(){ const o={}; formSave.fields.forEach(f=>{ const el=$("#f_"+f.k); o[f.k]=el?el.value.trim():""; }); return o; }
+
+const FORMS={
+  editDog(){ const d=dog(); openForm(`Edit ${d.name}`,[
+      {k:"name",label:"Name",value:d.name},{k:"breed",label:"Breed",value:d.breed},
+      {k:"birthday",label:"Birthday",type:"date",value:d.birthday},{k:"gotchaDay",label:"Gotcha day",type:"date",value:d.gotchaDay},
+      {k:"species",label:"Cat or dog?",type:"select",value:sp(d),options:[["dog","Dog"],["cat","Cat"]]},
+      {k:"microchip",label:"Microchip number",value:d.microchip},
+      {k:"fur",label:"Cartoon fur colour",type:"select",value:d.fur|0,options:FURS.map((f,i)=>[i,["Golden","Cream","Chocolate","Grey","Ivory","Black","Red","White"][i]])}],
+      v=>{ if(!v.name) return "Add a name."; Object.assign(d,{name:v.name,breed:v.breed,birthday:v.birthday,gotchaDay:v.gotchaDay,microchip:v.microchip,species:v.species,fur:+v.fur}); saveDog(d); toast("Saved"); });
+    $("#sheetForm").insertAdjacentHTML("beforeend",`<button class="btn ghost" type="button" data-action="dogPhoto">${d.photoId?"Change":"Add"} profile photo</button>`);
+  },
+  addDog(){ if(S.dogs.length>=4){ toast("Up to 4 pets on one plan."); return; }
+    openForm("Add a pet",[{k:"species",label:"Cat or dog?",type:"select",value:"cat",options:[["dog","Dog"],["cat","Cat"]]},{k:"name",label:"Name"},{k:"breed",label:"Breed"},{k:"birthday",label:"Birthday",type:"date"},{k:"gotchaDay",label:"Gotcha day",type:"date"},
+      {k:"fur",label:"Cartoon fur colour",type:"select",value:2,options:FURS.map((f,i)=>[i,["Golden","Cream","Chocolate","Grey","Ivory","Black","Red","White"][i]])}],
+      v=>{ if(!v.name) return "Add a name."; const d=newDog(v); S.dogId=d.id; saveDog(d); toast(`${d.name} joined the family`); go("today"); },"Add pet");
+  },
+  addWeight(){ openForm("Log weight",[{k:"kg",label:"Weight (kg)",type:"number",ph:"e.g. 8.4"},{k:"date",label:"Date",type:"date",value:todayKey()}],
+      v=>{ const kg=num(v.kg); if(kg==null||kg<=0||kg>150) return "Enter a weight in kg."; const d=dog(); d.weights=(d.weights||[]).filter(x=>x.date!==(v.date||todayKey())); d.weights.push({date:v.date||todayKey(),kg}); d.weights=d.weights.sort((a,b)=>a.date.localeCompare(b.date)).slice(-60); saveDog(d); addLog({type:"weight",kg}); toast("Weight saved"); });
+  },
+  addReminder(){ openForm("Add a reminder",[{k:"title",label:"What",ph:"e.g. Flea & tick chew"},{k:"due",label:"Next due",type:"date",value:todayKey()},
+      {k:"every",label:"Repeats",type:"select",value:30,options:[[0,"Just once"],[7,"Weekly"],[14,"Every 2 weeks"],[30,"Monthly"],[90,"Every 3 months"],[180,"Every 6 months"],[365,"Yearly"]]}],
+      v=>{ if(!v.title) return "Say what the reminder is for."; const d=dog(); (d.reminders=d.reminders||[]).push({id:rid(),title:v.title,due:v.due||todayKey(),every:+v.every||0}); saveDog(d); toast("Reminder added"); });
+  },
+  addVaccine(){ openForm("Add a vaccination",[{k:"name",label:"Vaccine",ph:"e.g. C5"},{k:"given",label:"Date given",type:"date"},{k:"due",label:"Next due",type:"date"}],
+      v=>{ if(!v.name) return "Add the vaccine name."; const d=dog(); (d.vaccines=d.vaccines||[]).push({id:rid(),name:v.name,given:v.given,due:v.due}); saveDog(d); toast("Vaccination saved"); });
+  },
+  editNotes(){ const d=dog(); openForm("Notes for the vet",[{k:"notes",label:"Notes",type:"textarea",value:d.notes,ph:"e.g. Scratching left ear after swims"}],v=>{ d.notes=v.notes; saveDog(d); toast("Notes saved"); }); },
+  editIns(){ const d=dog(), i=d.insurance||{}; openForm("Pet insurance",[{k:"insurer",label:"Insurer",value:i.insurer},{k:"policy",label:"Policy number",value:i.policy},
+      {k:"cover",label:"Cover (% of vet bills)",type:"number",value:i.cover},{k:"excess",label:"Excess ($)",type:"number",value:i.excess},{k:"premium",label:"Premium ($ per month)",type:"number",value:i.premium},
+      {k:"renews",label:"Renewal date",type:"date",value:i.renews},{k:"claims",label:"Claims phone",type:"tel",value:i.claims},{k:"limit",label:"Annual limit ($)",type:"number",value:i.limit},{k:"used",label:"Claimed so far this year ($)",type:"number",value:i.used}],
+      v=>{ if(!v.insurer) return "Add the insurer's name."; d.insurance=v; saveDog(d); toast("Insurance saved"); });
+  },
+  editVet(){ const d=dog(), x=d.vet||{}; openForm("My vet",[{k:"clinic",label:"Clinic name",value:x.clinic},{k:"vetName",label:"Vet's name",value:x.vetName},{k:"phone",label:"Phone",type:"tel",value:x.phone},
+      {k:"address",label:"Address",value:x.address},{k:"hours",label:"Opening hours",value:x.hours,ph:"e.g. 8am to 6pm weekdays"},{k:"nextAppt",label:"Next appointment",type:"date",value:x.nextAppt},{k:"apptTime",label:"Appointment time",type:"time",value:x.apptTime}],
+      v=>{ if(!v.clinic) return "Add the clinic name."; d.vet=v; saveDog(d); toast("Vet saved"); });
+  },
+  editEm(){ const d=dog(), x=d.emergency||{}; openForm("Emergency hospital",[{k:"name",label:"Hospital name",value:x.name},{k:"phone",label:"Phone",type:"tel",value:x.phone},{k:"address",label:"Address",value:x.address}],
+      v=>{ if(!v.name) return "Add the hospital name."; d.emergency=v; saveDog(d); toast("Emergency hospital saved"); });
+  },
+  addRoutine(){ openForm("Add to routine",[{k:"time",label:"Time",type:"time",value:"08:00"},{k:"task",label:"What",ph:"e.g. Morning walk"},{k:"who",label:"Who's doing it",ph:"e.g. You, Sam, the walker"}],
+      v=>{ if(!v.task) return "Say what happens."; const d=dog(); (d.routine=d.routine||[]).push({id:rid(),time:v.time,task:v.task,who:v.who}); saveDog(d); toast("Added to routine"); });
+  },
+  addTeam(){ openForm("Add to care team",[{k:"name",label:"Name"},{k:"role",label:"Role",ph:"e.g. Partner, dog walker, cat sitter"},{k:"phone",label:"Phone (optional)",type:"tel"}],
+      v=>{ if(!v.name) return "Add their name."; const d=dog(); (d.team=d.team||[]).push({id:rid(),name:v.name,role:v.role,phone:v.phone}); saveDog(d); toast(`${v.name} added`); });
+  },
+  addMilestone(){ openForm("Add a milestone",[{k:"title",label:"Milestone",ph:"e.g. First swim"},{k:"date",label:"Date",type:"date",value:todayKey()}],
+      v=>{ if(!v.title) return "Name the milestone."; const d=dog(); (d.milestones=d.milestones||[]).push({id:rid(),title:v.title,date:v.date}); saveDog(d); toast("Milestone saved"); });
+  },
+  editHandle(){ openForm("Your Pack handle",[{k:"handle",label:"Handle (shown on your posts)",value:S.profile.handle,ph:"e.g. brooke.and.biscuit"}],
+      v=>{ const h=cleanHandle(v.handle); if(!h) return "Use letters, numbers, dots or underscores."; S.profile.handle=h; saveProfile(); syncPack(); toast("Handle saved"); });
+  }
+};
+const LOGS={
+  walk:["Log a walk",[{k:"minutes",label:"Minutes",type:"number",ph:"e.g. 30"},{k:"km",label:"Distance (km)",type:"number",ph:"e.g. 2.4"},{k:"note",label:"Where (optional)",ph:"e.g. New Farm Park"}],v=>({type:"walk",minutes:num(v.minutes),km:num(v.km),note:v.note})],
+  play:["Log play time",[{k:"minutes",label:"Minutes",type:"number",ph:"e.g. 15"},{k:"note",label:"What you played (optional)",ph:"e.g. Feather wand"}],v=>({type:"play",minutes:num(v.minutes),note:v.note})],
+  meal:["Log a meal",[{k:"note",label:"What and how much",ph:"e.g. Half cup kibble + pumpkin"}],v=>({type:"meal",note:v.note})],
+  meds:["Log meds",[{k:"note",label:"Which medication",ph:"e.g. NexGard chew"}],v=>v.note?{type:"meds",note:v.note}:"Say which medication."],
+  note:["Add a note",[{k:"note",label:"Note",type:"textarea",ph:"e.g. Ate grass, a bit sooky this arvo"}],v=>v.note?{type:"note",note:v.note}:"Write a note first."]
+};
+function cleanHandle(h){ return String(h||"").replace(/^@+/,"").trim().toLowerCase().replace(/\s+/g,".").replace(/[^a-z0-9._]/g,"").slice(0,30); }
+function newDog(v){
+  const cat=v.species==="cat";
+  return {id:rid(),created:Date.now(),species:cat?"cat":"dog",treatLimit:cat?2:3,name:v.name,breed:v.breed||"",birthday:v.birthday||"",gotchaDay:v.gotchaDay||"",fur:+v.fur||0,microchip:"",
+    routine: cat? [{id:rid(),time:"07:00",task:"Breakfast",who:"You"},{id:rid(),time:"07:15",task:"Fresh water",who:"You"},{id:rid(),time:"18:00",task:"Dinner",who:"You"},{id:rid(),time:"19:00",task:"Play time",who:"You"},{id:rid(),time:"20:00",task:"Scoop the litter",who:"You"}]
+      : [{id:rid(),time:"07:00",task:"Breakfast",who:"You"},{id:rid(),time:"07:30",task:"Morning walk",who:"You"},{id:rid(),time:"18:00",task:"Dinner",who:"You"},{id:rid(),time:"18:30",task:"Evening walk",who:"You"}],
+    done:{},reminders:[],vaccines:[],weights:[],notes:"",vet:{},insurance:{},emergency:{},photos:[],milestones:[],team:[]};
+}
+
+/* ---------- photos ---------- */
+let pickCb=null;
+function pickPhoto(cb){
+  pickCb=cb; const fp=$("#filepick"); fp.value=""; fp.click();
+}
+$("#filepick").addEventListener("change",async e=>{
+  const file=e.target.files&&e.target.files[0]; if(!file||!pickCb) return;
+  const cb=pickCb; pickCb=null;
+  toast("Uploading photo…",8000);
+  try{
+    let blob=await shrink(file,1080,.8);
+    if(blob.size>520000) blob=await shrink(file,800,.7);
+    if(blob.size>700000) blob=await shrink(file,640,.6);
+    let id;
+    if(S.mode==="demo") id="local:"+URL.createObjectURL(blob);
+    else { const dataUrl=await toDataURL(blob); const ref=await S.db.collection("images").add({owner:S.uid,data:dataUrl,created:Date.now()}); id="img:"+ref.id; IMG.set(id,dataUrl); }
+    hideToast(); cb(id);
+  }catch(err){
+    const c=err&&err.code;
+    toast(c==="invalid-argument"?"That photo is too big. Try a smaller one.":c==="resource-exhausted"?"We've hit today's free limit. Try again tomorrow.":c==="permission-denied"?"Couldn't upload. Try signing out and back in.":"Couldn't upload that photo. Try again.");
+  }
+});
+function toDataURL(blob){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(blob); }); }
+function shrink(file,maxSide,quality){
+  return new Promise((res,rej)=>{
+    const url=URL.createObjectURL(file), img=new Image();
+    img.onload=()=>{ const m=maxSide||1080, s=Math.min(1,m/Math.max(img.width,img.height)); const c=document.createElement("canvas"); c.width=Math.round(img.width*s); c.height=Math.round(img.height*s);
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url); c.toBlob(b=>b?res(b):rej(new Error("encode")),"image/jpeg",quality||.8); };
+    img.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error("decode")); };
+    img.src=url;
+  });
+}
+function composer(){
+  const c=S.composer||{};
+  openSheet(`<h3 style="font-size:20px">Post to the Pack</h3>
+    <button class="bigphoto" data-action="composerPhoto" style="border:2px dashed var(--line);display:grid;place-items:center;color:var(--muted);font-weight:800;width:100%">${c.photoId?`<img ${imgAttr(c.photoId)} alt="Selected photo">`:"Tap to choose a photo"}</button>
+    <div class="field"><label for="c_cap">Caption</label><textarea id="c_cap" placeholder="What's ${esc((dog()||{}).name||"your pet")} up to?">${esc(c.caption||"")}</textarea></div>
+    <div class="field"><label for="c_loc">Location (optional)</label><input id="c_loc" value="${esc(c.loc||"")}" placeholder="e.g. New Farm Park" autocomplete="off"></div>
+    <p class="fine">Pets only, please. Everyone using ${esc(NAME)} can see this.</p>
+    <button class="btn primary" data-action="post">Post</button><button class="btn ghost" data-close>Cancel</button>`);
+}
+function keepComposer(){ if(!S.composer) S.composer={}; const cap=$("#c_cap"), loc=$("#c_loc"); if(cap) S.composer.caption=cap.value; if(loc) S.composer.loc=loc.value; }
+function addPost(photoId,caption,loc){
+  const d=dog(); const cur=myPack();
+  const po={id:rid(),dogName:d.name,breed:d.breed||"",species:sp(d),fur:d.fur|0,dogPhoto:d.photoId||null,photoId:photoId||null,caption:(caption||"").slice(0,500),loc:(loc||"").slice(0,60),time:Date.now()};
+  syncPack([po].concat(cur.posts||[]).slice(0,30));
+}
+
+/* ---------- toast ---------- */
+let tt;
+function toast(msg,ms){ const t=$("#toast"); t.textContent=msg; t.hidden=false; clearTimeout(tt); tt=setTimeout(()=>t.hidden=true,ms||2600); }
+function hideToast(){ clearTimeout(tt); $("#toast").hidden=true; }
+
+/* ---------- welcome ---------- */
+function buildSwatches(){
+  $("#w_furs").innerHTML=FURS.map((f,i)=>`<button type="button" class="swatch" data-fur="${i}" aria-pressed="${i===S.furPick}" aria-label="${["Golden","Cream","Chocolate","Grey","Ivory","Black","Red","White"][i]}" style="background:${f.bg};color:${f.fur}"><svg width="32" height="32" viewBox="0 0 120 120"><use href="#${S.speciesPick}"/></svg></button>`).join("");
+}
+$("#welcomeForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const name=$("#w_name").value.trim();
+  if(!name){ $("#w_err").hidden=false; $("#w_name").focus(); return; }
+  $("#w_err").hidden=true;
+  const d=newDog({species:S.speciesPick,name,breed:$("#w_breed").value.trim(),birthday:$("#w_bday").value,gotchaDay:$("#w_gotcha").value,fur:S.furPick});
+  const handle=cleanHandle($("#w_handle").value)||cleanHandle(name+"."+NAME.toLowerCase());
+  const hid=S.hid||(rid()+rid()+rid()).replace(/[^a-z0-9]/g,"").slice(0,24);
+  S.profile=Object.assign({following:[],plan:"trial"},S.profile||{},{handle,hid,onboarded:true,created:Date.now()});
+  S.dogs=[d]; S.dogId=d.id;
+  if(S.mode==="demo"){ go("paywall"); return; }
+  (async()=>{
+    try{
+      if(!S.hid){ await S.db.doc(`households/${hid}`).set({members:[S.uid],created:Date.now()}); }
+      S.hid=hid; await S.db.doc(P.dog(d.id)).set(strip(d)); S.dogBase[d.id]=keyMap(strip(d));
+      await S.db.doc(P.profile()).set(clone(S.profile)); syncPack();
+    }catch(err){ writeErr(err); }
+  })();
+  go("paywall");
+});
+async function joinHome(code,handle){
+  code=String(code||"").trim().toLowerCase().replace(/[^a-z0-9]/g,"");
+  if(code.length<10) return "That code looks too short. Copy the whole code from your partner's app.";
+  if(S.mode==="demo") return "Joining only works on the live app.";
+  try{
+    const ref=S.db.doc(`households/${code}`), snap=await ref.get();
+    if(!snap.exists) return "We couldn't find that code. Check it with your partner.";
+    const members=(snap.data().members)||[];
+    if(!members.includes(S.uid)){ if(members.length>=6) return "That household is full (6 people)."; await ref.update({members:firebase.firestore.FieldValue.arrayUnion(S.uid)}); }
+    const prev=S.profile||{};
+    S.profile=Object.assign({following:[],plan:"trial",trialStart:Date.now()},prev,{hid:code,handle:handle||prev.handle||cleanHandle((S.email||"").split("@")[0]),onboarded:true,created:prev.created||Date.now()});
+    await S.db.doc(P.profile()).set(clone(S.profile));
+    return null;
+  }catch(err){ return err&&err.code==="permission-denied"?"That code didn't work. Ask your partner to copy it again.":"Couldn't join right now. Check your connection and try again."; }
+}
+
+/* ---------- interactions ---------- */
+function boop(k,force){
+  const mine=clone((S.boops[S.uid]&&S.boops[S.uid].p)||{});
+  if(force&&mine[k]){ pop(k); return; }
+  if(mine[k]) delete mine[k]; else { mine[k]=true; }
+  S.boops[S.uid]={p:mine}; put(P.boop(),{p:mine}); const was=!!mine[k]; render(); if(was) pop(k);
+}
+function pop(k){ const el=[...document.querySelectorAll("[data-pop]")].find(x=>x.dataset.pop===k); if(!el) return; el.classList.add("on"); setTimeout(()=>el.classList.remove("on"),650); }
+function friendsSheet(q){
+  const following=(S.profile.following)||[];
+  const all=Object.entries(S.pack).filter(([id,p])=>id!==S.uid&&p&&p.dogName);
+  const list=all.filter(([id,p])=>!q||((p.handle||"")+" "+p.dogName+" "+(p.breed||"")).toLowerCase().includes(q.toLowerCase()));
+  openSheet(`<h3 style="font-size:20px">Grow your pack</h3>
+    <div class="field"><label for="findfriend">Search by @handle or pet's name</label><input id="findfriend" value="${esc(q||"")}" placeholder="e.g. pickle" autocomplete="off"></div>
+    <div class="list" id="friendList">${friendRows(list,following)}</div>
+    <p class="fine">Everyone using ${esc(NAME)} shows up here. To invite friends, send them ${esc(location.host||"the link")}.</p>
+    <button class="btn primary" data-close>Done</button>`);
+}
+function friendRows(list,following){
+  return list.length? list.map(([id,p])=>{const on=following.includes(id); return `<div class="row">${dogAvatar({fur:p.fur,photoId:p.photoId,species:p.species},40)}<div class="grow"><div class="t">${esc(p.dogName)} <span class="s">· ${esc(p.breed||"")}</span></div><div class="s">@${esc(p.handle||"")}</div></div><button class="follow" data-action="follow" data-id="${esc(id)}" aria-pressed="${on}">${on?"In your pack":"Add"}</button></div>`;}).join("")
+   : `<div class="empty" style="padding:12px">No one else is testing yet. Once friends open the link and set up their pet, they'll appear here.</div>`;
+}
+function sosSheet(){
+  const d=dog(), em=d.emergency||{}, v=d.vet||{};
+  openSheet(`<div class="em-head"><span class="pill alert" style="align-self:flex-start">Emergency</span><h3 style="font-size:22px">Get ${esc(d.name)} help</h3></div>
+  ${em.name?`<div class="em-card"><div class="section-h"><b style="font-family:var(--display);font-weight:600;font-size:18px">${esc(em.name)}</b><span class="pill open">Your 24/7 pick</span></div>${em.address?`<div style="color:var(--muted);font-size:13px">${esc(em.address)}</div>`:""}
+    ${em.phone?`<div class="copyline"><span class="num">${esc(em.phone)}</span><button data-action="copy" data-text="${esc(em.phone)}">Copy</button></div>`:""}
+    ${em.address?`<a class="btn primary" style="background:var(--alert);box-shadow:none;text-decoration:none" href="${MAPS(em.address)}" target="_blank" rel="noopener">Directions ↗</a>`:""}</div>`:""}
+  <a class="btn primary" style="${em.name?"":"background:var(--alert);box-shadow:none;"}text-decoration:none" href="${MAPS("24 hour emergency vet near me")}" target="_blank" rel="noopener">Find nearest 24/7 animal hospital ↗</a>
+  ${v.clinic&&v.phone?`<div class="copyline"><span><span class="stat-note" style="display:block">Your vet · ${esc(v.clinic)}</span><span class="num">${esc(v.phone)}</span></span><button data-action="copy" data-text="${esc(v.phone)}">Copy</button></div>`:""}
+  <p style="font-size:13px;color:var(--muted)">Call ahead so they can get ready. If ${esc(d.name)} ate something toxic, bring the packet. ${d.weights&&d.weights.length?`Latest weight: ${esc(d.weights[d.weights.length-1].kg)} kg.`:""}</p>
+  ${em.name?"":`<button class="btn ghost" data-action="editEmFromSos">Save an emergency hospital for next time</button>`}
+  <button class="btn ghost" data-close>Close</button>`);
+}
+function photoSheet(id){
+  const d=dog(), p=(d.photos||[]).find(x=>x.id===id); if(!p) return;
+  openSheet(`<div class="bigphoto"><img ${imgAttr(p.assetId)} alt="${esc(p.caption||"Photo")}"></div>
+    <div><b>${esc(p.caption||"Untitled")}</b><div class="stat-note">${esc(new Date(p.time).toLocaleDateString("en-AU",{day:"numeric",month:"long",year:"numeric"}))}</div></div>
+    ${p.posted?`<p class="stat-note">Shared to the Pack</p>`:`<button class="btn primary" data-action="sharePhoto" data-id="${esc(p.id)}">Share to the Pack</button>`}
+    <button class="btn ghost" data-action="useAsAvatar" data-id="${esc(p.id)}">Use as ${esc(d.name)}'s profile photo</button>
+    <div id="delZone"><button class="btn ghost" data-action="askDelPhoto" data-id="${esc(p.id)}" style="color:var(--alert)">Remove from Memories</button></div>
+    <button class="btn ghost" data-close>Close</button>`);
+}
+function copyText(t,label){
+  const done=()=>toast(label||"Number copied");
+  try{ navigator.clipboard.writeText(t).then(done,()=>toast(t)); }catch(_){ toast(t); }
+}
+
+document.addEventListener("click",e=>{
+  const img=e.target.closest("[data-dbl]");
+  if(img){ const now=Date.now(); if(img===lastImg&&now-lastTap<350){ boop(img.dataset.dbl,true); lastTap=0; } else { lastTap=now; lastImg=img; } return; }
+  const el=e.target.closest("button,[data-go]"); if(!el) return;
+  if(el.hasAttribute("data-close")){ closeSheet(); return; }
+  if(el.dataset.go){ closeSheet(); go(el.dataset.go); return; }
+  if(el.dataset.fur!=null){ S.furPick=+el.dataset.fur; buildSwatches(); return; }
+  if(el.dataset.species){ S.speciesPick=el.dataset.species; $$("#w_species button").forEach(b=>b.setAttribute("aria-pressed",b===el)); $("#w_name").placeholder=S.speciesPick==="cat"?"e.g. Mochi":"e.g. Biscuit"; $("#w_breed").placeholder=S.speciesPick==="cat"?"e.g. Ragdoll":"e.g. Cavoodle"; buildSwatches(); return; }
+  if(el.dataset.feed){ S.feed=el.dataset.feed; render(); return; }
+  if(el.dataset.hseg){ S.hseg=el.dataset.hseg; render(); return; }
+  const a=el.dataset.action; if(!a) return;
+  const d=dog(), id=el.dataset.id;
+  if(!d&&!["google","forgot","authToggle","signout","startTrial","copy","joinOpen"].includes(a)) return;
+  switch(a){
+    case "google": googleSignIn(); break;
+    case "joinOpen": openSheet(`<h3 style="font-size:20px">Join your partner's household</h3>
+      <p class="stat-note">In their app, they go to Routine and copy the invite code. Paste it here.</p>
+      <form class="form" id="joinForm" novalidate><div class="field"><label for="j_code">Invite code</label><input id="j_code" autocomplete="off" autocapitalize="none" spellcheck="false"></div>
+      <div class="field"><label for="j_handle">Your Pack handle</label><input id="j_handle" autocomplete="off" placeholder="e.g. sam.and.biscuit"></div>
+      <p class="stat-note" id="j_err" hidden style="color:var(--alert)"></p><button class="btn primary" type="submit">Join</button><button class="btn ghost" type="button" data-close>Cancel</button></form>`); break;
+    case "treat": treatSheet("",1); break;
+    case "treatPick": { const cur=$("#t_qty")?+$("#t_qty").textContent:1; treatSheet(el.dataset.t,cur); break; }
+    case "treatQty": { const nm=$("#t_name").value; treatSheet(nm,(+$("#t_qty").textContent)+(+el.dataset.d)); break; }
+    case "treatSave": { const nm=$("#t_name").value.trim()||"Treat", q=Math.max(1,+$("#t_qty").textContent||1);
+      addLog({type:"treat",note:nm.slice(0,40),qty:q}); closeSheet();
+      const lim=treatLimit(d), n=treatsOn(d,todayKey()).reduce((a,l)=>a+qtyOf(l),0);
+      toast(lim>0&&n>lim?`Logged. ${d.name} is ${n-lim} over today's limit.`:lim>0?`Logged. ${Math.max(0,lim-n)} left today.`:"Treat logged"); break; }
+    case "delTreat": delLog(id); toast("Treat removed"); break;
+    case "treatLimit": openForm("Daily treat limit",[{k:"lim",label:"Treats per day (0 for no limit)",type:"number",value:treatLimit(d)}],v=>{ const n=Math.round(num(v.lim)); if(!(n>=0&&n<=50)) return "Enter a number from 0 to 50."; d.treatLimit=n; saveDog(d); toast(n?`Limit set to ${n} a day`:"No daily limit"); }); break;
+    case "forgot": forgot(); break;
+    case "authToggle": setAuthMode(authMode==="signup"?"signin":"signup"); break;
+    case "signout": closeSheet(); S.auth&&S.auth.signOut(); break;
+    case "startTrial": S.profile.trialStart=Date.now(); S.profile.plan="trial"; saveProfile(); go("today"); toast("Free trial started. 14 days to go."); break;
+    case "switchDog": if(S.dogs.length>1){ const i=S.dogs.findIndex(x=>x.id===(d&&d.id)); S.dogId=S.dogs[(i+1)%S.dogs.length].id; render(); toast("Showing "+dog().name); } else go("account"); break;
+    case "pickDog": S.dogId=id; render(); break;
+    case "tick": { const t=todayKey(); d.done=d.done||{}; const arr=d.done[t]||[]; d.done[t]=arr.includes(id)?arr.filter(x=>x!==id):arr.concat(id);
+      Object.keys(d.done).sort().slice(0,-7).forEach(k=>delete d.done[k]); saveDog(d); break; }
+    case "remDone": { const r=(d.reminders||[]).find(x=>x.id===id); if(!r) break; addLog({type:"reminder",note:r.title});
+      if(r.every){ r.due=addDays(todayKey(),r.every); toast(`Done. Next one ${fmtDM(r.due)}`); } else { d.reminders=d.reminders.filter(x=>x.id!==id); toast("Done"); } saveDog(d); break; }
+    case "delReminder": d.reminders=(d.reminders||[]).filter(x=>x.id!==id); saveDog(d); break;
+    case "quickRem": (d.reminders=d.reminders||[]).push({id:rid(),title:el.dataset.t,due:todayKey(),every:+el.dataset.e}); saveDog(d); toast("Reminder added, due today"); break;
+    case "delVaccine": d.vaccines=(d.vaccines||[]).filter(x=>x.id!==id); saveDog(d); break;
+    case "delRoutine": d.routine=(d.routine||[]).filter(x=>x.id!==id); saveDog(d); break;
+    case "delTeam": d.team=(d.team||[]).filter(x=>x.id!==id); saveDog(d); break;
+    case "delMilestone": d.milestones=(d.milestones||[]).filter(x=>x.id!==id); saveDog(d); break;
+    case "logMenu": openSheet(`<h3 style="font-size:20px">Log for ${esc(d.name)}</h3><div class="qgrid">${[["treat","Treat"],sp(d)==="cat"?["play","Play"]:["walk","Walk"],["meal","Meal"],["meds","Meds"],["weight","Weight"],["photo","Photo"],["note","Note"],["reminderAdd","Reminder"]].map(([k,l])=>`<button data-action="log" data-k="${k}">${ico(k,22)}${l}</button>`).join("")}</div><button class="btn ghost" data-close>Close</button>`); break;
+    case "log": { const k=el.dataset.k;
+      if(k==="weight"){ FORMS.addWeight(); break; }
+      if(k==="treat"){ treatSheet("",1); break; }
+      if(k==="reminderAdd"){ FORMS.addReminder(); break; }
+      if(k==="photo"){ closeSheet(); pickPhoto(assetId=>photoCaption(assetId)); break; }
+      const [title,fields,fn]=LOGS[k]; openForm(title,fields,v=>{ const r=fn(v); if(typeof r==="string") return r; addLog(r); toast(title.replace(/^Log a |^Log |^Add a /,"").replace(/^./,c=>c.toUpperCase())+" logged"); }); break; }
+    case "addPhoto": pickPhoto(assetId=>photoCaption(assetId)); break;
+    case "openPhoto": photoSheet(id); break;
+    case "sharePhoto": { const p=(d.photos||[]).find(x=>x.id===id); if(!p) break; addPost(p.assetId,p.caption,""); p.posted=true; saveDog(d); closeSheet(); toast("Shared to the Pack"); break; }
+    case "useAsAvatar": { const p=(d.photos||[]).find(x=>x.id===id); if(!p) break; d.photoId=p.assetId; saveDog(d); closeSheet(); toast("Profile photo updated"); break; }
+    case "askDelPhoto": $("#delZone").innerHTML=`<div class="confirm"><b>Remove this photo from Memories?</b><span class="stat-note">If you shared it to the Pack, the post stays.</span><button class="btn primary" style="background:var(--alert);box-shadow:none" data-action="delPhoto" data-id="${esc(id)}">Remove</button></div>`; break;
+    case "delPhoto": d.photos=(d.photos||[]).filter(x=>x.id!==id); saveDog(d); closeSheet(); toast("Removed"); break;
+    case "dogPhoto": closeSheet(); pickPhoto(assetId=>{ const dd=dog(); dd.photoId=assetId; saveDog(dd); toast("Profile photo updated"); }); break;
+    case "compose": S.composer={}; composer(); break;
+    case "composerPhoto": keepComposer(); pickPhoto(assetId=>{ S.composer=S.composer||{}; S.composer.photoId=assetId; composer(); }); break;
+    case "post": { keepComposer(); const c=S.composer||{}; if(!c.photoId&&!c.caption){ toast("Add a photo or a caption first."); break; } addPost(c.photoId,c.caption,c.loc); closeSheet(); S.feed="everyone"; go("pack"); toast("Posted to the Pack"); break; }
+    case "delPost": { const cur=myPack(); syncPack((cur.posts||[]).filter(p=>p.id!==id)); render(); toast("Post deleted"); break; }
+    case "boop": boop(el.dataset.k); break;
+    case "friends": friendsSheet(""); break;
+    case "follow": { const f=new Set(S.profile.following||[]); const on=f.has(id); on?f.delete(id):f.add(id); S.profile.following=[...f]; saveProfile();
+      const q=$("#findfriend")?$("#findfriend").value:""; friendsSheet(q); if(!on) toast((S.pack[id]||{}).dogName+" joined your pack"); break; }
+    case "sos": sosSheet(); break;
+    case "editEmFromSos": FORMS.editEm(); break;
+    case "copy": copyText(el.dataset.text,el.dataset.label); break;
+    case "plan": S.profile.plan=el.dataset.plan; saveProfile(); toast(el.dataset.plan==="subscribed"?"You're on the founding members list. Free during the beta.":"Cancelled. Your records stay here."); break;
+    default: if(FORMS[a]) FORMS[a]();
+  }
+});
+let lastTap=0,lastImg=null;
+function photoCaption(assetId){
+  openForm("Add to Memories",[{k:"caption",label:"Caption",ph:"e.g. First swim"}],v=>{
+    const d=dog(); (d.photos=d.photos||[]).push({id:rid(),assetId,caption:v.caption,time:Date.now()}); d.photos=d.photos.slice(-200); saveDog(d); addLog({type:"photo",note:v.caption}); toast("Saved to Memories");
+  },"Save photo");
+}
+document.addEventListener("submit",e=>{
+  if(e.target.id!=="sheetForm") return;
+  e.preventDefault(); if(!formSave) return;
+  const err=formSave.onSave(readForm());
+  if(typeof err==="string"){ const p=$("#formErr"); p.textContent=err; p.hidden=false; return; }
+  if(formSave) closeSheet();
+});
+document.addEventListener("submit",async e=>{
+  if(e.target.id!=="joinForm") return; e.preventDefault();
+  const btn=e.target.querySelector("button[type=submit]"); btn.disabled=true;
+  const err=await joinHome($("#j_code").value,cleanHandle($("#j_handle").value));
+  btn.disabled=false;
+  if(err){ const p=$("#j_err"); p.textContent=err; p.hidden=false; return; }
+  closeSheet(); S.screen="today"; toast("You're in! You now share these pets.");
+});
+document.addEventListener("input",e=>{
+  if(e.target.id==="findfriend"){ const q=e.target.value; const following=S.profile.following||[];
+    const all=Object.entries(S.pack).filter(([id,p])=>id!==S.uid&&p&&p.dogName&&(!q||((p.handle||"")+" "+p.dogName+" "+(p.breed||"")).toLowerCase().includes(q.toLowerCase())));
+    $("#friendList").innerHTML=friendRows(all,following); }
+});
+$("#scrim").addEventListener("click",e=>{ if(e.target.id==="scrim") closeSheet(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("#scrim").hidden) closeSheet(); });
+
+init();
+})();
+</script>
+</body>
+</html>
